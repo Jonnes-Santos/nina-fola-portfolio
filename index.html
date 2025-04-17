@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nina Fola · Socióloga & Percussionista</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;700&family=Switzer:wght@300;500&family=Georgia:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Cabeçalho Fixo -->
+  <nav class="main-header">
+    <div class="main-header__logo">NINA FOLA</div>
+    <ul class="main-header__menu">
+      <li><a href="#inicio" class="active">Início</a></li>
+      <li><a href="#projetos">Projetos</a></li>
+      <li><a href="#blog">Artigos</a></li>
+      <li><a href="#musica">Música</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+    <button class="main-header__mobile-btn" aria-label="Menu">☰</button>
+  </nav>
+
+  <!-- Conteúdo Principal -->
+  <main class="content-wrapper">
+    <!-- Seção Hero com Carrossel -->
+<section id="inicio" class="hero">
+  <div class="hero__carousel">
+    <div class="hero__slide" style="background-image: url('assets/hero-bg1.jpg')"></div>
+    <div class="hero__slide" style="background-image: url('assets/hero-bg2.jpg')"></div>
+    <div class="hero__slide" style="background-image: url('assets/hero-bg3.jpg')"></div>
+  </div>
+  <div class="hero__title-wrapper">
+    <h1 class="hero__title--main">NINA FOLA</h1>
+    <p class="hero__title--sub">Socióloga, Pesquisadora, Doutoranda em Sociologia, Percussionista popular formada no RJ.</p>
+  </div>
+  <div class="hero__scroll-hint"></div>
+</section>
+
+    <!-- Seção Sobre -->
+    <section class="about">
+      <div class="about__content">
+        <h2 class="section-title">Sobre</h2>
+        <p class="about__text">
+          Socióloga e percussionista com pesquisa focada em cultura popular e identidade. 
+          Minha obra explora a interseção entre arte e sociedade, utilizando a música como 
+          ferramenta de análise. Atualmente desenvolvo minha pesquisa de doutorado na UFRJ.
+        </p>
+      </div>
+    </section>
+
+    <!-- Seção Projetos -->
+    <section id="projetos" class="works">
+      <h2 class="section-title">Projetos Acadêmicos & Artísticos</h2>
+      <div class="works__filters">
+        <button class="works__filter-btn active" data-filter="all">Todos</button>
+        <button class="works__filter-btn" data-filter="academic">Acadêmicos</button>
+        <button class="works__filter-btn" data-filter="artistic">Artísticos</button>
+        <button class="works__filter-btn" data-filter="music">Músicas</button> <!-- Novo botão -->
+      </div>
+      <div class="works__grid">
+        <!-- Projeto Acadêmico -->
+        <article class="work-card work-card--academic" data-category="academic">
+          <img src="assets/pesquisa.jpg" alt="Projeto de Pesquisa" class="work-card__image">
+          <div class="work-card__content">
+            <h3 class="work-card__title">Cultura Popular Urbana</h3>
+            <p class="work-card__desc">Pesquisa em Sociologia (2023)</p>
+          </div>
+        </article>
+      
+        <!-- Projeto Artístico (não musical) -->
+        <article class="work-card work-card--artistic" data-category="artistic">
+          <img src="assets/show.jpg" alt="Apresentação Artística" class="work-card__image">
+          <div class="work-card__content">
+            <h3 class="work-card__title">Tambores da Cidade</h3>
+            <p class="work-card__desc">Performance (2023)</p>
+          </div>
+        </article>
+      
+        <!-- Projeto Musical (novo tipo) -->
+        <article class="work-card work-card--music" data-category="music">
+          <div class="work-card__spotify">
+            <iframe style="border-radius:12px" 
+                    src="https://open.spotify.com/embed/track/ID_DA_SUA_MUSICA?utm_source=generator" 
+                    width="100%" 
+                    height="152" 
+                    frameborder="0" 
+                    allowfullscreen="" 
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                    loading="lazy">
+            </iframe>
+          </div>
+          <div class="work-card__content">
+            <h3 class="work-card__title">Nome da Música</h3>
+            <p class="work-card__desc">Single (2023)</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Seção Artigos -->
+    <section id="blog" class="blog">
+      <h2 class="section-title">Artigos & Reflexões</h2>
+      <div class="blog__posts">
+        <article class="blog-post">
+          <h3 class="blog-post__title">Ritmo e Sociedade</h3>
+          <p class="blog-post__excerpt">Análise da percussão como expressão cultural...</p>
+          <a href="#" class="blog-post__link">Ler no ResearchGate</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- Seção Música -->
+    <section id="musica" class="music">
+      <h2 class="section-title">Trabalhos Musicais</h2>
+      <div class="music__gallery">
+        <!-- Vídeo Embed -->
+        <div class="music__video">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/PRPre0-p9wQ" frameborder="0" allowfullscreen></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção Contato -->
+    <section id="contato" class="contact">
+      <h2 class="section-title">Contato</h2>
+      <div class="contact__wrapper">
+        <form class="contact__form">
+          <input type="text" placeholder="Nome" required>
+          <input type="email" placeholder="E-mail" required>
+          <textarea placeholder="Mensagem" required></textarea>
+          <button type="submit">Enviar</button>
+        </form>
+        <div class="contact__links">
+          <a href="http://lattes.cnpq.br/..." target="_blank">Currículo Lattes</a>
+          <a href="https://researchgate.net/..." target="_blank">ResearchGate</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Rodapé -->
+  <footer class="main-footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <div class="footer-title">NINA FOLA</div>
+        <p class="footer-text">Socióloga, Pesquisadora e Percussionista</p>
+      </div>
+      <div class="footer-section">
+        <div class="footer-subtitle">Contato</div>
+        <p class="footer-text">email@exemplo.com</p>
+        <p class="footer-text">+55 (21) 99999-9999</p>
+      </div>
+      <div class="footer-section">
+        <div class="footer-subtitle">Redes Sociais</div>
+        <div class="social-links">
+          <a href="#" aria-label="Instagram">
+            <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+          <a href="#" aria-label="YouTube">
+            <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+          </a>
+          <a href="#" aria-label="LinkedIn">
+            <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; <span id="current-year"></span> Nina Fola. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
