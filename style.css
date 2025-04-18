@@ -597,15 +597,24 @@ body {
 
 /* Responsividade */
 @media (max-width: 768px) {
+  /* Header ajustado */
+  .main-header {
+    height: 60px;
+    padding: 0 1rem;
+  }
+
+  /* Menu mobile melhorado */
   .main-header__menu {
     display: none;
     flex-direction: column;
-    position: absolute;
-    top: 80px;
+    position: fixed; /* Alterado de absolute para fixed */
+    top: 60px; /* Ajustado para a nova altura do header */
     left: 0;
     width: 100%;
-    background-color: var(--color-bg-dark);
-    padding: 2rem;
+    background-color: white; /* Fundo branco para melhor contraste */
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 999;
   }
 
   .main-header__menu.show {
@@ -614,36 +623,66 @@ body {
 
   .main-header__mobile-btn {
     display: block;
+    font-size: 1.5rem;
   }
 
+  /* Filtros mais compactos */
   .works__filters {
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row; /* Mantém em linha mas quebra em várias */
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
   }
 
+  .works__filter-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  /* Contato ajustado */
   .contact__wrapper {
     grid-template-columns: 1fr;
+    gap: var(--space-md);
   }
 
+  /* Rodapé centralizado */
   .footer-content {
     grid-template-columns: 1fr;
     text-align: center;
+    gap: var(--space-md);
   }
   
   .social-links {
     justify-content: center;
   }
 
+  /* Hero section otimizada */
   .hero {
-    padding: var(--space-lg);
+    padding: var(--space-lg) var(--space-md);
+    min-height: 80vh;
   }
 
   .hero__title--main {
-    font-size: clamp(2.5rem, 10vw, 5rem);
+    font-size: clamp(2.5rem, 10vw, 4rem); /* Limite máximo reduzido */
+    margin-bottom: var(--space-xs);
+  }
+
+  .hero__title--sub {
+    font-size: 1.1rem;
+  }
+
+  /* Ajustes adicionais para conteúdo */
+  .about, .works, .blog, .music, .contact {
+    padding: var(--space-lg) var(--space-md);
+  }
+
+  /* Grid de uma coluna para mobile */
+  .works__grid, .blog__posts {
+    grid-template-columns: 1fr;
   }
 }
 
-/* Animações */
+/* Mantenha suas animações existentes */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
