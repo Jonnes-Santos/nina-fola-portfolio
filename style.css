@@ -767,3 +767,21 @@ body {
 .hero__title-wrapper {
   animation: fadeIn 1s ease-out;
 }
+/* Estilos para o texto da seção Sobre */
+.about__text {
+  font-family: 'Inter', sans-serif; /* Fonte do Emerge Mag para textos */
+  font-size: 1.1rem; /* Tamanho base */
+  line-height: 1.8; /* Espaçamento entre linhas */
+  color: #333; /* Cor similar ao Emerge Mag */
+  margin-bottom: 1.5rem;
+  max-width: 1500px; /* Largura máxima para melhor leitura */
+}
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+  .about__text {
+    font-size: 1rem; /* Tamanho menor em mobile */
+    line-height: 1.6;
+    padding: 0 10px; /* Padding lateral para não colar nas bordas */
+  }
+}
