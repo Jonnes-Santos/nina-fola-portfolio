@@ -777,11 +777,23 @@ body {
   max-width: 1500px; /* Largura máxima para melhor leitura */
 }
 
-/* Responsividade para mobile */
+/* Mobile (max-width: 768px) */
 @media (max-width: 768px) {
+  .about {
+    padding: var(--space-md) 5%; /* Padding menor */
+  }
+
   .about__text {
-    font-size: 1rem; /* Tamanho menor em mobile */
+    font-size: 1rem; /* Texto mais compacto */
     line-height: 1.6;
-    padding: 0 10px; /* Padding lateral para não colar nas bordas */
+    padding: 0; /* Remove padding interno se necessário */
+    hyphens: auto; /* Hifenização para quebras de linha */
+    text-align: left; /* Alinhamento consistente */
+    word-break: break-word; /* Evita overflow */
+  }
+
+  .about__read-more {
+    width: 100%; /* Botão ocupa toda a largura */
+    padding: 0.8rem; /* Mais fácil para toque */
   }
 }
