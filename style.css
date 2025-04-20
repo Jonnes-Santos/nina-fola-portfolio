@@ -523,6 +523,14 @@ body {
     width: 100%;
     text-align: center;
   }
+  .modal-page {
+    transition: opacity 0.3s ease;
+  }
+  .modal-image {
+    border: 2px solid var(--color-bg-light); /* Novo */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Novo */
+  }
+  
 }
 
 /* Responsividade para o modal */
@@ -1045,4 +1053,13 @@ button, .works__filter-btn {
     width: 100%; /* Botão ocupa toda a largura */
     padding: 0.8rem; /* Mais fácil para toque */
   }
+}
+.section-title::after {
+  width: 100px; /* Aumenta a largura */
+  height: 4px; /* Mais espesso */
+  background: linear-gradient(90deg, var(--color-accent), transparent); /* Efeito degradê */
+}
+.about__text span.highlight {
+  font-weight: 600;
+  color: var(--color-accent);
 }

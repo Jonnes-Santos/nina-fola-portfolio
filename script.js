@@ -162,20 +162,21 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Abrir modal
-    readMoreBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      currentPage = 0;
-      updateModal();
-      modal.style.display = 'block';
-      document.body.style.overflow = 'hidden';
-      
-      // Pré-carrega as imagens restantes
-      modalImages.forEach((img, index) => {
-        if (index !== 0) {
-          new Image().src = img.src;
-        }
-      });
-    });
+readMoreBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  currentPage = 0;
+  updateModal();
+  modal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  
+  // Forçar carregamento de todas as imagens
+  modalImages.forEach(img => {
+    img.loading = 'eager';
+    const src = img.src;
+    img.src = '';
+    img.src = src;
+  });
+});
 
     // Fechar modal
     const closeModal = () => {
