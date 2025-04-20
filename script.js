@@ -97,6 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ========== FILTRO DE PROJETOS ========== //
   if (filterButtons.length && workCards.length) {
+    // Exibe todos os cards inicialmente
+    workCards.forEach(card => card.style.display = 'block');
+  
     filterButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         filterButtons.forEach(button => button.classList.remove('active'));
@@ -105,13 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const filter = btn.dataset.filter;
         
         workCards.forEach(card => {
-          if (filter === 'all') {
-            card.style.display = 'block';
-          } else if (filter === 'music') {
-            card.style.display = card.dataset.category === 'music' ? 'block' : 'none';
-          } else {
-            card.style.display = card.dataset.category === filter ? 'block' : 'none';
-          }
+          card.style.display = card.dataset.category === filter ? 'block' : 'none';
         });
       });
     });
