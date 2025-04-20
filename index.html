@@ -40,45 +40,61 @@
 </section>
 
     <!-- Seção Sobre -->
-<section class="about">
-  <div class="about__content">
-    <h2 class="section-title">Sobre</h2>
-    <p class="about__text">
-      Descendente de família histórica do Carnaval de Porto Alegre-RS,
-      Nina Fola se traduz muito mais do que como uma cantora riograndense,
-      é além: mulher de terreiro, porto-alegrense, nascida e criada na tradição
-      do Batuque, do Samba e da Capoeira. É neta de Paulina Cunha, uma Iyalorixá,
-      (mãe de santo), e filha de Pedro e Eunice Cunha, família fundadora do Bloco
-      Trevo de Ouro, que foi tricampeão do Carnaval de Rua de Porto Alegre-RS na 
-      década de 60. 'Egbomi' (filha mais velha) da Comunidade Terreira Ilê Asé Iyemonjá
-      omi Olodo desde 1985, trás no seu propósito e responsabilidade algo que transcende
-      a musicalidade e incorpora, em suas composições, uma herança ancestral e cultural,
-      apresentando, como em um encontro, a sua essência: a "cultura afrodiaspórica brasileira".
-      <span class="about__more-text">[...]</span> <!-- Texto truncado -->
-    </p>
-    <button class="about__read-more">Ver mais...</button>
-  </div>
-</section>
-
-<!-- Modal -->
-<div class="about-modal" id="aboutModal">
-  <div class="about-modal__content">
-    <span class="about-modal__close">&times;</span>
-    <h2 class="about-modal__title">Trajetória Completa</h2>
-    <div class="about-modal__text">
-      <!-- Aqui vai o conteúdo completo -->
-      <p>Texto completo sobre a trajetória da artista...</p>
-      <p>Mais detalhes sobre formação acadêmica...</p>
-      <p>Carreira artística e projetos relevantes...</p>
-      <!-- Adicione quantas páginas/quebras necessárias -->
-    </div>
-    <div class="about-modal__navigation">
-      <button class="about-modal__prev">Anterior</button>
-      <button class="about-modal__next">Próximo</button>
-    </div>
-  </div>
-</div>
+    <section class="about">
+      <div class="about__content">
+        <h2 class="section-title">Sobre</h2>
+        
+        <!-- Estrutura dividida em blocos (opcional: adicione uma imagem de perfil aqui) -->
+        <div class="about__text-wrapper">
+          <p class="about__text about__highlight">
+            Descendente de família histórica do Carnaval de Porto Alegre-RS, Nina Fola se traduz muito mais do que como uma cantora riograndense, é além: mulher de terreiro, porto-alegrense, nascida e criada na tradição do Batuque, do Samba e da Capoeira.
+          </p>
+          
+          <p class="about__text">
+            É neta de Paulina Cunha, uma Iyalorixá (mãe de santo), e filha de Pedro e Eunice Cunha, família fundadora do Bloco Trevo de Ouro, que foi tricampeão do Carnaval de Rua de Porto Alegre-RS na década de 60.
+          </p>
+          
+          <p class="about__text about__highlight">
+            'Egbomi' (filha mais velha) da Comunidade Terreira Ilê Asé Iyemonjá omi Olodo desde 1985, trás no seu propósito e responsabilidade algo que transcende a musicalidade e incorpora, em suas composições, uma herança ancestral e cultural, apresentando, como em um encontro, a sua essência: a "cultura afrodiaspórica brasileira".
+          </p>
+        </div>
+        
+        <button class="about__read-more">
+          Ver mais <span class="arrow">→</span>
+        </button>
+      </div>
     </section>
+    
+    <!-- Modal (conteúdo completo) -->
+    <div class="about-modal" id="aboutModal">
+      <div class="about-modal__content">
+        <span class="about-modal__close">&times;</span>
+        <h2 class="about-modal__title">Trajetória Completa</h2>
+        
+        <div class="about-modal__text">
+          <!-- Página 1 -->
+          <p class="modal-page active">
+            Nina Fola é uma artista multifacetada cuja trajetória se entrelaça com a cultura negra brasileira. Formada em Sociologia pela UFRGS, dedicou-se a pesquisas sobre manifestações culturais urbanas, com ênfase no Carnaval como resistência política e identitária.
+          </p>
+          
+          <!-- Página 2 -->
+          <p class="modal-page">
+            Como percussionista, integrou grupos como <em>Tambores de Olokun</em> e <em>Afro-Sul Odomodê</em>, levando o som dos atabaques para festivais internacionais. Seu álbum solo "Águas de Oyá" (2019) foi indicado ao Prêmio Açorianos de Música.
+          </p>
+          
+          <!-- Página 3 -->
+          <p class="modal-page">
+            Ativista cultural, coordena o projeto <em>Ogum's Toque</em>, que oferece oficinas de percussão para jovens em comunidades periféricas. "Minha arte é um portal para diálogos entre o sagrado e o contemporâneo", afirma a artista.
+          </p>
+        </div>
+        
+        <div class="about-modal__navigation">
+          <button class="about-modal__prev">← Anterior</button>
+          <span class="about-modal__counter">1/3</span>
+          <button class="about-modal__next">Próximo →</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Seção Projetos -->
     <section id="projetos" class="works">

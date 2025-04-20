@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Constantes reutilizáveis
+  // ===== CONSTANTES E ELEMENTOS GERAIS =====
   const MOBILE_BREAKPOINT = 768;
   const HEADER_HEIGHT = 80;
   
@@ -14,10 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const heroSlides = document.querySelectorAll('.hero__slide');
   const readMoreBtn = document.querySelector('.about__read-more');
   const modal = document.getElementById('aboutModal');
+  const currentYear = document.getElementById('current-year');
 
-  // ========== CÓDIGO DO CARROSSEL ========== //
+  // ===== CARROSSEL HERO =====
   let currentSlide = 0;
-  const slideInterval = 5000; // 5 segundos
+  const slideInterval = 5000;
 
   function showSlide(n) {
     heroSlides.forEach((slide, index) => {
@@ -30,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
     showSlide(currentSlide);
   }
 
-  // Inicia o carrossel apenas se existirem slides
   if (heroSlides.length > 0) {
     showSlide(0);
     if (heroSlides.length > 1) {
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ========== MENU MOBILE ========== //
+  // ===== MENU MOBILE =====
   if (mobileBtn && menu && menuLinks.length) {
     mobileBtn.addEventListener('click', () => {
       const isExpanded = mobileBtn.getAttribute('aria-expanded') === 'true';
@@ -51,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Fechar menu ao clicar em um link (mobile)
     menuLinks.forEach(link => {
       link.addEventListener('click', () => {
         if (window.innerWidth <= MOBILE_BREAKPOINT) {
@@ -63,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ========== SCROLL SUAVE ========== //
+  // ===== SCROLL SUAVE =====
   function smoothScroll(e) {
     e.preventDefault();
     const targetId = this.getAttribute('href');
@@ -95,18 +94,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ========== FILTRO DE PROJETOS ========== //
+  // ===== FILTRO DE PROJETOS (SEM BOTÃO "TODOS") =====
   if (filterButtons.length && workCards.length) {
-    // Exibe todos os cards inicialmente
+    // Mostra todos os cards inicialmente
     workCards.forEach(card => card.style.display = 'block');
-  
+
     filterButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         filterButtons.forEach(button => button.classList.remove('active'));
         btn.classList.add('active');
         
         const filter = btn.dataset.filter;
-        
         workCards.forEach(card => {
           card.style.display = card.dataset.category === filter ? 'block' : 'none';
         });
@@ -114,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ========== CONTROLE DE PLAYERS DE ÁUDIO ========== //
+  // ===== CONTROLE DE PLAYERS DE ÁUDIO =====
   if (audioPlayers.length) {
     audioPlayers.forEach(player => {
       player.addEventListener('play', () => {
@@ -125,67 +123,92 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ========== MODAL DA SEÇÃO "SOBRE" ========== //
+  // ===== SEÇÃO SOBRE (MODAL ATUALIZADO) =====
   if (readMoreBtn && modal) {
     const closeBtn = modal.querySelector('.about-modal__close');
     const prevBtn = modal.querySelector('.about-modal__prev');
     const nextBtn = modal.querySelector('.about-modal__next');
-    const pages = modal.querySelectorAll('.about-modal__text > p');
-    
+    const pages = modal.querySelectorAll('.modal-page');
+    const counter = modal.querySelector('.about-modal__counter');
+    let currentPage = 0;
+
+    // Atualiza a exibição do modal
+    const updateModal = () => {
+      pages.forEach((page, index) => {
+        page.classList.toggle('active', index === currentPage);
+      });
+      counter.textContent = `${currentPage + 1}/${pages.length}`;
+      prevBtn.disabled = currentPage === 0;
+      nextBtn.disabled = currentPage === pages.length - 1;
+    };
+
     // Abrir modal
-    readMoreBtn.addEventListener('click', () => {
+    readMoreBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      currentPage = 0;
+      updateModal();
       modal.style.display = 'block';
       document.body.style.overflow = 'hidden';
     });
-    
+
     // Fechar modal
-    closeBtn.addEventListener('click', () => {
+    const closeModal = () => {
       modal.style.display = 'none';
       document.body.style.overflow = 'auto';
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => e.target === modal && closeModal());
+
+    // Navegação
+    prevBtn.addEventListener('click', () => {
+      currentPage = Math.max(0, currentPage - 1);
+      updateModal();
     });
-    
-    // Fechar ao clicar fora
-    window.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
+
+    nextBtn.addEventListener('click', () => {
+      currentPage = Math.min(pages.length - 1, currentPage + 1);
+      updateModal();
+    });
+
+    // Navegação por teclado
+    modal.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+      if (e.key === 'ArrowLeft' && currentPage > 0) {
+        currentPage--;
+        updateModal();
+      }
+      if (e.key === 'ArrowRight' && currentPage < pages.length - 1) {
+        currentPage++;
+        updateModal();
       }
     });
-    
-    // Navegação entre páginas (se houver múltiplos parágrafos)
-    if (pages.length > 1) {
-      let currentPage = 0;
-      
-      function showPage(pageIndex) {
-        pages.forEach((page, index) => {
-          page.style.display = index === pageIndex ? 'block' : 'none';
-        });
-      }
-      
-      showPage(0);
-      
-      prevBtn.addEventListener('click', () => {
-        currentPage = Math.max(0, currentPage - 1);
-        showPage(currentPage);
-      });
-      
-      nextBtn.addEventListener('click', () => {
-        currentPage = Math.min(pages.length - 1, currentPage + 1);
-        showPage(currentPage);
-      });
-    } else {
-      // Esconde navegação se só tiver uma página
-      modal.querySelector('.about-modal__navigation').style.display = 'none';
-    }
+
+    updateModal(); // Inicializa
   }
 
-  // ========== ATUALIZAR ANO NO RODAPÉ ========== //
-  const currentYear = document.getElementById('current-year');
+  // ===== ANIMAÇÃO DA SEÇÃO SOBRE =====
+  const aboutSection = document.querySelector('.about');
+  if (aboutSection) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    observer.observe(aboutSection);
+  }
+
+  // ===== ANO ATUAL NO RODAPÉ =====
   if (currentYear) {
     currentYear.textContent = new Date().getFullYear();
   }
 
-  // ========== FECHAR MENU AO CLICAR FORA ========== //
+  // ===== FECHAR MENU AO CLICAR FORA (MOBILE) =====
   document.addEventListener('click', (e) => {
     if (window.innerWidth <= MOBILE_BREAKPOINT && 
         !mobileBtn.contains(e.target) && 
@@ -197,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ========== FECHAR MENU AO REDIMENSIONAR ========== //
+  // ===== AJUSTAR MENU AO REDIMENSIONAR =====
   window.addEventListener('resize', () => {
     if (window.innerWidth > MOBILE_BREAKPOINT) {
       menu.style.display = '';
