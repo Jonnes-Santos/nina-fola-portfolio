@@ -352,8 +352,8 @@ body {
   margin: 5% auto;
   padding: 2.5rem;
   border-radius: var(--border-radius-md);
-  width: 80%;
-  max-width: 800px;
+  width: 83%;
+  max-width: 1400px;
   max-height: 80vh;
   overflow-y: auto;
   position: relative;
@@ -431,6 +431,7 @@ body {
   color: var(--color-accent);
   font-weight: 500;
 }
+
 
 /* ===== ANIMAÇÕES ===== */
 @keyframes fadeInUp {
