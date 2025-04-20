@@ -123,69 +123,93 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ===== SEÇÃO SOBRE (MODAL ATUALIZADO) =====
-  if (readMoreBtn && modal) {
-    const closeBtn = modal.querySelector('.about-modal__close');
-    const prevBtn = modal.querySelector('.about-modal__prev');
-    const nextBtn = modal.querySelector('.about-modal__next');
-    const pages = modal.querySelectorAll('.modal-page');
-    const counter = modal.querySelector('.about-modal__counter');
-    let currentPage = 0;
+  // ===== SEÇÃO SOBRE (MODAL COM TROCA DE IMAGENS) =====
+if (readMoreBtn && modal) {
+  // Elementos do modal
+  const closeBtn = modal.querySelector('.about-modal__close');
+  const prevBtn = modal.querySelector('.about-modal__prev');
+  const nextBtn = modal.querySelector('.about-modal__next');
+  const pages = modal.querySelectorAll('.modal-page');
+  const modalImages = modal.querySelectorAll('.modal-image'); // Novo: seleciona todas as imagens
+  const counter = modal.querySelector('.about-modal__counter');
+  let currentPage = 0;
 
-    // Atualiza a exibição do modal
-    const updateModal = () => {
-      pages.forEach((page, index) => {
-        page.classList.toggle('active', index === currentPage);
-      });
-      counter.textContent = `${currentPage + 1}/${pages.length}`;
-      prevBtn.disabled = currentPage === 0;
-      nextBtn.disabled = currentPage === pages.length - 1;
-    };
+  // Função para atualizar o modal (texto + imagens)
+  const updateModal = () => {
+    // Atualiza páginas de texto
+    pages.forEach((page, index) => {
+      page.classList.toggle('active', index === currentPage);
+    });
+    
+    // Atualiza imagens correspondentes
+    document.querySelectorAll('.modal-image').forEach((img, index) => {
+      img.classList.toggle('active', index === currentPage);
+    });
+  
+    // Atualiza contador
+    counter.textContent = `${currentPage + 1}/${pages.length}`;
+    
+    // Atualiza estado dos botões
+    prevBtn.disabled = currentPage === 0;
+    nextBtn.disabled = currentPage === pages.length - 1;
+  };
 
-    // Abrir modal
-    readMoreBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      currentPage = 0;
+  // Abrir modal (reset para primeira página)
+  readMoreBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    currentPage = 0;
+    updateModal();
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    
+    // Foco no modal para acessibilidade
+    modal.setAttribute('aria-hidden', 'false');
+  });
+
+  // Fechar modal
+  const closeModal = () => {
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    modal.setAttribute('aria-hidden', 'true');
+  };
+
+  // Eventos de fechar
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  // Navegação entre páginas
+  prevBtn.addEventListener('click', () => {
+    if (currentPage > 0) {
+      currentPage--;
       updateModal();
-      modal.style.display = 'block';
-      document.body.style.overflow = 'hidden';
-    });
+    }
+  });
 
-    // Fechar modal
-    const closeModal = () => {
-      modal.style.display = 'none';
-      document.body.style.overflow = 'auto';
-    };
-
-    closeBtn.addEventListener('click', closeModal);
-    modal.addEventListener('click', (e) => e.target === modal && closeModal());
-
-    // Navegação
-    prevBtn.addEventListener('click', () => {
-      currentPage = Math.max(0, currentPage - 1);
+  nextBtn.addEventListener('click', () => {
+    if (currentPage < pages.length - 1) {
+      currentPage++;
       updateModal();
-    });
+    }
+  });
 
-    nextBtn.addEventListener('click', () => {
-      currentPage = Math.min(pages.length - 1, currentPage + 1);
+  // Navegação por teclado
+  modal.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'ArrowLeft' && currentPage > 0) {
+      currentPage--;
       updateModal();
-    });
+    }
+    if (e.key === 'ArrowRight' && currentPage < pages.length - 1) {
+      currentPage++;
+      updateModal();
+    }
+  });
 
-    // Navegação por teclado
-    modal.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeModal();
-      if (e.key === 'ArrowLeft' && currentPage > 0) {
-        currentPage--;
-        updateModal();
-      }
-      if (e.key === 'ArrowRight' && currentPage < pages.length - 1) {
-        currentPage++;
-        updateModal();
-      }
-    });
-
-    updateModal(); // Inicializa
-  }
+  // Inicialização
+  updateModal();
+}
 
   // ===== ANIMAÇÃO DA SEÇÃO SOBRE =====
   const aboutSection = document.querySelector('.about');

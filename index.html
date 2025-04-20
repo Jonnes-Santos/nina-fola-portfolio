@@ -46,7 +46,7 @@
         
         <!-- Estrutura dividida em blocos (opcional: adicione uma imagem de perfil aqui) -->
         <div class="about__text-wrapper">
-          <p class="about__text about__highlight">
+          <p class="about__text">
             Descendente de família histórica do Carnaval de Porto Alegre-RS, Nina Fola se traduz muito mais do que como uma cantora riograndense, é além: mulher de terreiro, porto-alegrense, nascida e criada na tradição do Batuque, do Samba e da Capoeira.
           </p>
           
@@ -54,7 +54,7 @@
             É neta de Paulina Cunha, uma Iyalorixá (mãe de santo), e filha de Pedro e Eunice Cunha, família fundadora do Bloco Trevo de Ouro, que foi tricampeão do Carnaval de Rua de Porto Alegre-RS na década de 60.
           </p>
           
-          <p class="about__text about__highlight">
+          <p class="about__text">
             'Egbomi' (filha mais velha) da Comunidade Terreira Ilê Asé Iyemonjá omi Olodo desde 1985, trás no seu propósito e responsabilidade algo que transcende a musicalidade e incorpora, em suas composições, uma herança ancestral e cultural, apresentando, como em um encontro, a sua essência: a "cultura afrodiaspórica brasileira".
           </p>
         </div>
@@ -71,27 +71,32 @@
         <span class="about-modal__close">&times;</span>
         <h2 class="about-modal__title">Trajetória Completa</h2>
         
-        <div class="about-modal__text">
-          <!-- Página 1 -->
-          <p class="modal-page active">
-            Nina Fola é uma artista multifacetada cuja trajetória se entrelaça com a cultura negra brasileira. Formada em Sociologia pela UFRGS, dedicou-se a pesquisas sobre manifestações culturais urbanas, com ênfase no Carnaval como resistência política e identitária.
-          </p>
+        <div class="about-modal__grid">
+          <!-- Container de imagens -->
+          <div class="about-modal__image-wrapper">
+            <img src="assets/nina001.jpg" class="modal-image active" alt="Nina Fola em apresentação acadêmica">
+            <img src="assets/nina002.jpg" class="modal-image" alt="Nina Fola em show musical">
+            <img src="assets/nina003.jpg" class="modal-image" alt="Nina Fola em oficina cultural">
+          </div>
           
-          <!-- Página 2 -->
-          <p class="modal-page">
-            Como percussionista, integrou grupos como <em>Tambores de Olokun</em> e <em>Afro-Sul Odomodê</em>, levando o som dos atabaques para festivais internacionais. Seu álbum solo "Águas de Oyá" (2019) foi indicado ao Prêmio Açorianos de Música.
-          </p>
-          
-          <!-- Página 3 -->
-          <p class="modal-page">
-            Ativista cultural, coordena o projeto <em>Ogum's Toque</em>, que oferece oficinas de percussão para jovens em comunidades periféricas. "Minha arte é um portal para diálogos entre o sagrado e o contemporâneo", afirma a artista.
-          </p>
-        </div>
-        
-        <div class="about-modal__navigation">
-          <button class="about-modal__prev">← Anterior</button>
-          <span class="about-modal__counter">1/3</span>
-          <button class="about-modal__next">Próximo →</button>
+          <!-- Container de texto -->
+          <div class="about-modal__text">
+            <div class="modal-page active">
+              <p>Nina Fola é uma artista multifacetada...</p>
+            </div>
+            <div class="modal-page">
+              <p>Como percussionista, integrou grupos...</p>
+            </div>
+            <div class="modal-page">
+              <p>Ativista cultural, coordena o projeto...</p>
+            </div>
+            
+            <div class="about-modal__navigation">
+              <button class="about-modal__prev">← Anterior</button>
+              <span class="about-modal__counter">1/3</span>
+              <button class="about-modal__next">Próximo →</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
