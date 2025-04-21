@@ -192,7 +192,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.6);
 }
 .hero__title-wrapper {
   position: relative; /* Garante que fique acima do carrossel */
@@ -204,23 +204,34 @@ body {
 
 .hero__title--main {
   font-family: var(--font-primary);
-  font-size: clamp(3.5rem, 10vw, 8rem) !important; /* Força o tamanho original */
+  font-size: clamp(3.5rem, 10vw, 8rem) !important;
   line-height: 0.9;
   letter-spacing: -0.05em;
-  color: var(--color-text-light);
+  color: white; /* Garantindo cor branca pura */
   margin-bottom: var(--space-sm);
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 
+    2px 2px 8px rgba(0, 0, 0, 0.8), /* Sombra mais intensa */
+    0 0 20px rgba(0, 0, 0, 0.5); /* Efeito de glow sutil */
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .hero__title--sub {
   font-family: var(--font-secondary);
-  font-size: clamp(1.25rem, 3vw, 1.75rem) !important; /* Força o tamanho original */
+  font-size: clamp(1.25rem, 3vw, 1.75rem) !important;
   font-weight: 300;
   line-height: 1.4;
   max-width: 600px;
   margin: 0 auto;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  color: white; /* Garantindo cor branca pura */
+  text-shadow: 
+    1px 1px 4px rgba(0, 0, 0, 0.8), /* Sombra mais intensa */
+    0 0 10px rgba(0, 0, 0, 0.5); /* Efeito de glow sutil */
+  padding: 0.5rem 1.5rem;
+  background-color: rgba(0, 0, 0, 0.3); /* Fundo semi-transparente */
+  border-radius: 50px;
 }
+
 
 
 .hero__slide:nth-child(1) {
@@ -1120,4 +1131,20 @@ button, .works__filter-btn {
   left: 0;
   color: #E63946;
   font-size: 1.2rem;
+}
+@keyframes subtlePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.hero__title-wrapper {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+  animation: 
+    fadeIn 1s ease-out,
+    subtlePulse 6s ease-in-out infinite;
 }
