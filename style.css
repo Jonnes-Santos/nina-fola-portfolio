@@ -523,6 +523,31 @@ body {
     width: 100%;
     text-align: center;
   }
+  /* Adicione isso ao seu style.css */
+.about-modal__title {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #457B9D, #E63946);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+}
+
+.about-modal__title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #457B9D, #E63946);
+}
   .modal-page {
     transition: opacity 0.3s ease;
   }
@@ -1065,4 +1090,34 @@ button, .works__filter-btn {
 .about__text span.highlight {
   font-weight: 600;
   color: var(--color-accent);
+}
+/* Adicione isso para melhorar o texto */
+.modal-page.active {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #333;
+}
+
+.modal-page.active p {
+  margin-bottom: 1.5rem;
+}
+
+.about__list {
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.about__list li {
+  margin-bottom: 0.8rem;
+  position: relative;
+  padding-left: 1.2rem;
+}
+
+.about__list li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #E63946;
+  font-size: 1.2rem;
 }
