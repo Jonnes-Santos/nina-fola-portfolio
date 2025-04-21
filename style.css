@@ -204,15 +204,12 @@ body {
 
 .hero__title--main {
   font-family: var(--font-primary);
-  font-size: clamp(3.5rem, 10vw, 8rem);
+  font-size: clamp(3.5rem, 10vw, 8rem) !important; /* Força o tamanho original */
   line-height: 0.9;
   letter-spacing: -0.05em;
-  background: linear-gradient(90deg, #457B9D, #E63946);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--color-text-light);
   margin-bottom: var(--space-sm);
-  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .hero__title--sub {
