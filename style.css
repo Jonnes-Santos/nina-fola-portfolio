@@ -204,19 +204,23 @@ body {
 
 .hero__title--main {
   font-family: var(--font-primary);
-  font-size: clamp(3.5rem, 10vw, 8rem) !important; /* Força o tamanho original */
+  font-size: clamp(3.5rem, 10vw, 8rem);
   line-height: 0.9;
   letter-spacing: -0.05em;
-  color: var(--color-text-light);
+  background: linear-gradient(90deg, #457B9D, #E63946);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   margin-bottom: var(--space-sm);
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .hero__title--sub {
-  font-family: var(--font-secondary);
+  font-family: var(--font-primary);
   font-size: clamp(1.25rem, 3vw, 1.75rem) !important; /* Força o tamanho original */
   font-weight: 300;
   line-height: 1.4;
+  background: linear-gradient(90deg, #457B9D, #E63946);
   max-width: 600px;
   margin: 0 auto;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
@@ -253,7 +257,7 @@ body {
   height: 150px;
   background: url('assets/nina001.jpg') no-repeat;
   background-size: cover;
-  opacity: 0.1;
+  opacity: 0.2;
   z-index: -1;
   border-radius: 50%;
 }
