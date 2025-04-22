@@ -693,6 +693,96 @@ section {
   margin: 0 var(--space-sm) var(--space-sm);
   color: var(--color-text);
 }
+/* Estilos do Carrossel de Projetos */
+.works__carousel-container {
+  position: relative;
+  margin: 2rem auto;
+  max-width: 1200px;
+  overflow: hidden;
+}
+
+.works__carousel {
+  display: flex;
+  transition: transform 0.5s ease;
+  gap: 2rem;
+  padding: 1rem 0;
+}
+
+.work-card {
+  flex: 0 0 calc(33.333% - 1.33rem);
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.works__carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.works__carousel-btn:hover {
+  background: var(--color-accent);
+  color: white;
+}
+
+.works__carousel-btn--prev {
+  left: 1rem;
+}
+
+.works__carousel-btn--next {
+  right: 1rem;
+}
+
+.works__carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.works__carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ccc;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.works__carousel-dot.active {
+  background: var(--color-accent);
+  transform: scale(1.2);
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .work-card {
+    flex: 0 0 calc(50% - 1rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .work-card {
+    flex: 0 0 100%;
+  }
+  
+  .works__carousel-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+  }
+}
 
 .audio-player {
   width: calc(100% - 2rem);

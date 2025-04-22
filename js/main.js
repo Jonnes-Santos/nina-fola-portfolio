@@ -8,13 +8,126 @@ document.addEventListener('DOMContentLoaded', () => {
   const menu = document.querySelector('.main-header__menu');
   const menuLinks = document.querySelectorAll('.main-header__menu a');
   const anchorLinks = document.querySelectorAll('a[href^="#"]');
-  const filterButtons = document.querySelectorAll('.works__filter-btn');
+  
   const workCards = document.querySelectorAll('.work-card');
   const audioPlayers = document.querySelectorAll('.audio-player');
   const heroSlides = document.querySelectorAll('.hero__slide');
   const readMoreBtn = document.querySelector('.about__read-more');
   const modal = document.getElementById('aboutModal');
   const currentYear = document.getElementById('current-year');
+
+  // Adicione este código ao seu main.js, dentro do DOMContentLoaded
+
+// Carrossel de Projetos
+const carousel = document.querySelector('.works__carousel');
+const carouselItems = document.querySelectorAll('.work-card');
+const prevBtn = document.querySelector('.works__carousel-btn--prev');
+const nextBtn = document.querySelector('.works__carousel-btn--next');
+const dotsContainer = document.querySelector('.works__carousel-dots');
+const filterButtons = document.querySelectorAll('.works__filter-btn');
+
+let currentIndex = 0;
+let cardWidth = 0;
+let visibleCards = 3;
+
+function updateCardWidth() {
+  const containerWidth = document.querySelector('.works__carousel-container').offsetWidth;
+  if (window.innerWidth <= 768) {
+    visibleCards = 1;
+  } else if (window.innerWidth <= 1024) {
+    visibleCards = 2;
+  } else {
+    visibleCards = 3;
+  }
+  cardWidth = (containerWidth / visibleCards) - (2 * visibleCards);
+}
+
+function updateCarousel() {
+  updateCardWidth();
+  const offset = -currentIndex * (cardWidth + 32); // 32px é o gap
+  carousel.style.transform = `translateX(${offset}px)`;
+  updateDots();
+}
+
+function updateDots() {
+  const dots = document.querySelectorAll('.works__carousel-dot');
+  dots.forEach((dot, index) => {
+    dot.classList.toggle('active', index === currentIndex);
+  });
+}
+
+function createDots() {
+  dotsContainer.innerHTML = '';
+  const totalItems = document.querySelectorAll('.work-card[data-category="academic"]').length;
+  
+  for (let i = 0; i < totalItems; i++) {
+    const dot = document.createElement('button');
+    dot.classList.add('works__carousel-dot');
+    if (i === 0) dot.classList.add('active');
+    dot.addEventListener('click', () => {
+      currentIndex = i;
+      updateCarousel();
+    });
+    dotsContainer.appendChild(dot);
+  }
+}
+
+// Filtros
+function filterProjects(category) {
+  const allCards = document.querySelectorAll('.work-card');
+  let visibleCards = [];
+  
+  allCards.forEach(card => {
+    if (card.dataset.category === category) {
+      card.style.display = 'block';
+      visibleCards.push(card);
+    } else {
+      card.style.display = 'none';
+    }
+  });
+  
+  // Reorganiza o carrossel para mostrar apenas os cards visíveis
+  currentIndex = 0;
+  createDots();
+  updateCarousel();
+}
+
+// Event Listeners
+if (prevBtn && nextBtn) {
+  prevBtn.addEventListener('click', () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      updateCarousel();
+    }
+  });
+
+  nextBtn.addEventListener('click', () => {
+    const totalItems = document.querySelectorAll('.work-card:not([style*="display: none"])').length;
+    if (currentIndex < totalItems - visibleCards) {
+      currentIndex++;
+      updateCarousel();
+    }
+  });
+}
+
+if (filterButtons.length) {
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterProjects(btn.dataset.filter);
+    });
+  });
+  
+  // Inicia com projetos acadêmicos
+  filterProjects('academic');
+}
+
+// Inicialização
+window.addEventListener('resize', updateCarousel);
+updateCardWidth();
+createDots();
+updateCarousel();
 
   // ===== CARROSSEL HERO =====
   let currentSlide = 0;
