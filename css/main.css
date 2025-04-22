@@ -747,11 +747,11 @@ section {
 }
 
 .works__carousel-btn--prev {
-  left: 2rem;
+  left: -1rem;
 }
 
 .works__carousel-btn--next {
-  right: 2rem;
+  right: -1rem;
 }
 
 /* Efeito de hover mais suave */
