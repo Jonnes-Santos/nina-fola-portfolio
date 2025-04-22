@@ -262,11 +262,12 @@ body {
   right: 0;
   width: 150px;
   height: 150px;
-  background: url('assets/nina001.jpg') no-repeat;
+  background: url('../assets/nina001.jpg') no-repeat; /* Ajuste o caminho se necessário */
   background-size: cover;
   opacity: 0.1;
   z-index: -1;
   border-radius: 50%;
+  display: block; /* Garante que o pseudo-elemento será renderizado */
 }
 
 .about .section-title {
