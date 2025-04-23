@@ -118,7 +118,7 @@ body {
   bottom: 0;
   left: 0;
   width: 0;
-  height: 1px;
+  height: 2px;
   background: var(--color-primary);
   background-color: var(--color-accent);
   transition: width var(--transition-normal);
@@ -206,14 +206,35 @@ body {
   font-family: var(--font-primary);
   font-size: clamp(3.5rem, 10vw, 8rem) !important;
   line-height: 0.9;
-  letter-spacing: -0.05em;
-  color: white; /* Garantindo cor branca pura */
+  letter-spacing: 1px;
+  color: white;
   margin-bottom: var(--space-sm);
-  text-shadow: 
-    2px 2px 8px rgba(0, 0, 0, 0.8), /* Sombra mais intensa */
-    0 0 20px rgba(0, 0, 0, 0.5); /* Efeito de glow sutil */
   font-weight: 700;
   text-transform: uppercase;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.hero__title--main::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.hero__title--main::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .hero__title--sub {
@@ -227,9 +248,6 @@ body {
   text-shadow: 
     1px 1px 4px rgba(0, 0, 0, 0.8), /* Sombra mais intensa */
     0 0 10px rgba(0, 0, 0, 0.5); /* Efeito de glow sutil */
-  padding: 0.5rem 1.5rem;
-  background-color: rgba(0, 0, 0, 0.3); /* Fundo semi-transparente */
-  border-radius: 50px;
 }
 
 
