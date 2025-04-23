@@ -110,6 +110,29 @@ body {
   padding: 0.5rem 0;
   transition: color var(--transition-fast);
 }
+/* Estilos para os ícones sociais no cabeçalho */
+.main-header__logo {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.main-header__logo .social-icon {
+  width: 24px;
+  height: 24px;
+  fill: var(--color-text-dark);
+  transition: all var(--transition-fast);
+}
+
+.main-header__logo .social-icon:hover {
+  fill: var(--color-accent);
+  transform: scale(1.1);
+}
+
+.social-icon-link {
+  display: inline-flex;
+  align-items: center;
+}
 
 /* Efeito hover similar ao emergemag */
 .main-header__menu a::after {
