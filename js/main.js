@@ -262,15 +262,26 @@ if (readMoreBtn && modal) {
 
   // Função para atualizar o modal com rolagem para o topo
   const updateModal = () => {
-    modal.querySelector('.about-modal__content').scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-
+    // Força a rolagem para o topo de forma mais agressiva no mobile
+    const modalContent = modal.querySelector('.about-modal__content');
+    
+    // Solução universal para desktop e mobile
+    if (modalContent) {
+      modalContent.style.scrollBehavior = 'auto'; // Desabilita smooth scroll temporariamente
+      modalContent.scrollTop = 0; // Força imediatamente para o topo
+      
+      // Habilita smooth scroll novamente após 100ms
+      setTimeout(() => {
+        modalContent.style.scrollBehavior = 'smooth';
+      }, 100);
+    }
+  
+    // Atualiza páginas de texto
     pages.forEach((page, index) => {
       page.classList.toggle('active', index === currentPage);
     });
     
+    // Atualiza imagens
     modalImages.forEach((img, index) => {
       img.classList.toggle('active', index === currentPage);
       
@@ -281,7 +292,7 @@ if (readMoreBtn && modal) {
         img.src = src;
       }
     });
-
+  
     counter.textContent = `${currentPage + 1}/${pages.length}`;
     prevBtn.disabled = currentPage === 0;
     nextBtn.disabled = currentPage === pages.length - 1;
