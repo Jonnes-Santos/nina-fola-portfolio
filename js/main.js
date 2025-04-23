@@ -236,103 +236,119 @@ updateCarousel();
     });
   }
 
-  // ===== SEÇÃO SOBRE (MODAL COM TROCA DE IMAGENS) =====
-  if (readMoreBtn && modal) {
-    const closeBtn = modal.querySelector('.about-modal__close');
-    const prevBtn = modal.querySelector('.about-modal__prev');
-    const nextBtn = modal.querySelector('.about-modal__next');
-    const pages = modal.querySelectorAll('.modal-page');
-    const modalImages = modal.querySelectorAll('.modal-image');
-    const counter = modal.querySelector('.about-modal__counter');
-    let currentPage = 0;
+  /// ===== SEÇÃO SOBRE (MODAL COM TROCA DE IMAGENS) =====
+if (readMoreBtn && modal) {
+  const closeBtn = modal.querySelector('.about-modal__close');
+  const prevBtn = modal.querySelector('.about-modal__prev');
+  const nextBtn = modal.querySelector('.about-modal__next');
+  const pages = modal.querySelectorAll('.modal-page');
+  const modalImages = modal.querySelectorAll('.modal-image');
+  const counter = modal.querySelector('.about-modal__counter');
+  let currentPage = 0;
 
-    // Função para atualizar o modal
-    const updateModal = () => {
-      // Atualiza páginas de texto
-      pages.forEach((page, index) => {
-        page.classList.toggle('active', index === currentPage);
-      });
-      
-      // Atualiza imagens
-      modalImages.forEach((img, index) => {
-        img.classList.toggle('active', index === currentPage);
-        
-        // Força o carregamento da imagem se estiver visível
-        if (index === currentPage && !img.complete) {
-          img.loading = 'eager';
-          const src = img.src;
-          img.src = '';
-          img.src = src;
-        }
-      });
-
-      // Atualiza contador
-      counter.textContent = `${currentPage + 1}/${pages.length}`;
-      
-      // Atualiza estado dos botões
-      prevBtn.disabled = currentPage === 0;
-      nextBtn.disabled = currentPage === pages.length - 1;
-    };
-
-    // Abrir modal
-readMoreBtn.addEventListener('click', (e) => {
-  e.preventDefault();
-  currentPage = 0;
-  updateModal();
-  modal.style.display = 'block';
-  document.body.style.overflow = 'hidden';
-  
-  // Forçar carregamento de todas as imagens
-  modalImages.forEach(img => {
-    img.loading = 'eager';
-    const src = img.src;
-    img.src = '';
-    img.src = src;
-  });
-});
-
-    // Fechar modal
-    const closeModal = () => {
+  // Função para fechar o modal - versão robusta
+  const closeModal = () => {
+    if (!modal) return;
+    
+    modal.style.opacity = '0';
+    modal.style.transition = 'opacity 0.3s ease';
+    
+    setTimeout(() => {
       modal.style.display = 'none';
+      modal.style.opacity = '1';
       document.body.style.overflow = 'auto';
-    };
+    }, 300);
+  };
 
-    closeBtn.addEventListener('click', closeModal);
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal();
+  // Função para atualizar o modal com rolagem para o topo
+  const updateModal = () => {
+    modal.querySelector('.about-modal__content').scrollTo({
+      top: 0,
+      behavior: 'smooth'
     });
 
-    // Navegação
-    prevBtn.addEventListener('click', () => {
-      if (currentPage > 0) {
-        currentPage--;
-        updateModal();
+    pages.forEach((page, index) => {
+      page.classList.toggle('active', index === currentPage);
+    });
+    
+    modalImages.forEach((img, index) => {
+      img.classList.toggle('active', index === currentPage);
+      
+      if (index === currentPage && !img.complete) {
+        img.loading = 'eager';
+        const src = img.src;
+        img.src = '';
+        img.src = src;
       }
     });
 
-    nextBtn.addEventListener('click', () => {
-      if (currentPage < pages.length - 1) {
-        currentPage++;
-        updateModal();
-      }
-    });
+    counter.textContent = `${currentPage + 1}/${pages.length}`;
+    prevBtn.disabled = currentPage === 0;
+    nextBtn.disabled = currentPage === pages.length - 1;
+  };
 
-    // Navegação por teclado
-    modal.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeModal();
-      if (e.key === 'ArrowLeft' && currentPage > 0) {
-        currentPage--;
-        updateModal();
-      }
-      if (e.key === 'ArrowRight' && currentPage < pages.length - 1) {
-        currentPage++;
-        updateModal();
-      }
-    });
+  // Event listeners
+  readMoreBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    currentPage = 0;
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    
+    setTimeout(() => {
+      modal.querySelector('.about-modal__content').scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      updateModal();
+    }, 50);
+  });
 
-    // Inicialização
-    updateModal();
-  }
+  // Fechar modal
+  closeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeModal();
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  // Navegação
+  prevBtn.addEventListener('click', () => {
+    if (currentPage > 0) {
+      currentPage--;
+      updateModal();
+    }
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if (currentPage < pages.length - 1) {
+      currentPage++;
+      updateModal();
+    }
+  });
+
+  // Teclado
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.style.display === 'block') {
+      closeModal();
+    }
+    if (e.key === 'ArrowLeft' && currentPage > 0) {
+      currentPage--;
+      updateModal();
+    }
+    if (e.key === 'ArrowRight' && currentPage < pages.length - 1) {
+      currentPage++;
+      updateModal();
+    }
+  });
+
+  // Inicialização
+  updateModal();
+}
+
 
   // ===== ANIMAÇÃO DA SEÇÃO SOBRE =====
   const aboutSection = document.querySelector('.about');
