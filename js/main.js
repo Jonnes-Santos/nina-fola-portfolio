@@ -447,6 +447,40 @@ function formatDate(dateValue) {
     return '';
   }
 }
+function showFullArticle(row) {
+  const articleModal = document.getElementById('articleModal');
+  if (!articleModal) return;
+  
+  const cells = row.c;
+  const title = cells[0]?.v || 'Sem título';
+  const content = cells[2]?.v || 'Conteúdo não disponível';
+  const date = cells[3]?.f || formatDate(cells[3]?.v) || '';
+  const imageUrl = cells[4]?.v || '';
+  
+  // Preencher o modal com os dados do artigo
+  articleModal.querySelector('.article-modal__title').textContent = title;
+  articleModal.querySelector('.article-modal__date').textContent = date;
+  articleModal.querySelector('.article-modal__body').innerHTML = content;
+  
+  // Lidar com a imagem (se existir)
+  const modalImage = articleModal.querySelector('.article-modal__image');
+  if (imageUrl) {
+    modalImage.src = imageUrl;
+    modalImage.alt = title;
+    modalImage.style.display = 'block';
+  } else {
+    modalImage.style.display = 'none';
+  }
+  
+  // Mostrar o modal
+  articleModal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  
+  // Adicionar classe 'show' para ativar a animação
+  setTimeout(() => {
+    articleModal.classList.add('show');
+  }, 10);
+}
 
 async function loadArticlesFromGoogleSheets() {
   const articlesContainer = document.querySelector('.blog__posts');
