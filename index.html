@@ -343,17 +343,47 @@
 </div>
     </section>
 
-    <!-- Seção Música -->
-    <section id="musica" class="music">
-      <h2 class="section-title">Vídeoclipes</h2>
-      <div class="music__gallery">
-        <!-- Vídeo Embed -->
-        <div class="music__video">
-          <iframe width="560" height="315" src="https://www.youtube.com/embed/PRPre0-p9wQ" frameborder="0" allowfullscreen></iframe>
-        </div>
+    <!-- Seção Música/Vídeoclipes -->
+<section id="musica" class="music">
+  <h2 class="section-title">Vídeoclipes</h2>
+  <div class="music__gallery">
+    <!-- Vídeo 1 -->
+    <div class="music__video-card">
+      <div class="music__video-wrapper">
+        <img src="https://img.youtube.com/vi/PRPre0-p9wQ/maxresdefault.jpg" 
+             alt="Thumbnail do vídeo Obatalá" class="music__video-thumbnail" loading="lazy">
+        <button class="music__video-play" data-video-id="PRPre0-p9wQ" aria-label="Reproduzir vídeo">
+          <svg viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </button>
       </div>
-      
-    </section>
+      <div class="music__video-info">
+        <h3 class="music__video-title">Obatalá</h3>
+        <p class="music__video-desc">2023 • Dessa Ferreira ft. Nina Fola</p>
+      </div>
+    </div>
+    
+    <!-- Vídeo 2 -->
+    <div class="music__video-card">
+      <div class="music__video-wrapper">
+        <img src="https://img.youtube.com/vi/SEU_OUTRO_VIDEO_ID/maxresdefault.jpg" 
+             alt="Thumbnail do vídeo Dois Mundos" class="music__video-thumbnail" loading="lazy">
+        <button class="music__video-play" data-video-id="SEU_OUTRO_VIDEO_ID" aria-label="Reproduzir vídeo">
+          <svg viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="music__video-info">
+        <h3 class="music__video-title">Dois Mundos</h3>
+        <p class="music__video-desc">2023 • Dessa Ferreira ft. Nina Fola</p>
+      </div>
+    </div>
+    
+    <!-- Adicione mais vídeos conforme necessário -->
+  </div>
+</section>
 
     <!-- Seção Contato -->
     <section id="contato" class="contact">

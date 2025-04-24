@@ -374,6 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===== FECHAR MENU AO CLICAR FORA (MOBILE) =====
   document.addEventListener('click', (e) => {
     if (window.innerWidth <= MOBILE_BREAKPOINT && 
+        mobileBtn && menu &&
         !mobileBtn.contains(e.target) && 
         !menu.contains(e.target) &&
         menu.style.display === 'flex') {
@@ -386,9 +387,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===== AJUSTAR MENU AO REDIMENSIONAR =====
   window.addEventListener('resize', () => {
     if (window.innerWidth > MOBILE_BREAKPOINT) {
-      menu.style.display = '';
-      mobileBtn.setAttribute('aria-expanded', 'false');
-    } else {
+      if (menu) menu.style.display = '';
+      if (mobileBtn) mobileBtn.setAttribute('aria-expanded', 'false');
+    } else if (menu) {
       menu.style.display = 'none';
     }
   });
@@ -400,8 +401,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const articleModalClose = document.querySelector('.article-modal__close');
   if (articleModalClose) {
     articleModalClose.addEventListener('click', () => {
-      document.getElementById('articleModal').style.display = 'none';
-      document.body.style.overflow = 'auto';
+      const articleModal = document.getElementById('articleModal');
+      if (articleModal) {
+        articleModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
     });
   }
 
@@ -412,6 +416,45 @@ document.addEventListener('DOMContentLoaded', () => {
       articleModal.style.display = 'none';
       document.body.style.overflow = 'auto';
     }
+  });
+
+  // ===== CARREGAMENTO DE VÍDEOS =====
+  document.querySelectorAll('.music__video-play').forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.stopPropagation();
+      
+      const videoId = this.getAttribute('data-video-id');
+      const videoWrapper = this.parentElement;
+      
+      // Adiciona um loader enquanto o iframe carrega
+      videoWrapper.innerHTML = `
+        <div class="video-loader">
+          <div class="loader-spinner"></div>
+        </div>
+      `;
+      
+      // Cria o iframe após um pequeno delay para mostrar o loader
+      setTimeout(() => {
+        videoWrapper.innerHTML = `
+          <iframe width="560" height="315" 
+                  src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1" 
+                  frameborder="0" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  allowfullscreen
+                  loading="lazy"></iframe>
+        `;
+      }, 300);
+    });
+  });
+  
+  // Opcional: Permite clicar em qualquer área do card para reproduzir
+  document.querySelectorAll('.music__video-card').forEach(card => {
+    card.addEventListener('click', function() {
+      const playButton = this.querySelector('.music__video-play');
+      if (playButton) {
+        playButton.click();
+      }
+    });
   });
 });
 
@@ -447,6 +490,7 @@ function formatDate(dateValue) {
     return '';
   }
 }
+
 function showFullArticle(row) {
   const articleModal = document.getElementById('articleModal');
   if (!articleModal) return;
@@ -483,7 +527,7 @@ function showFullArticle(row) {
 }
 
 async function loadArticlesFromGoogleSheets() {
-  const articlesContainer = document.querySelector('.blog__posts');
+  const articlesContainer = document.querySelector('.blog__carousel');
   if (!articlesContainer) {
     console.error('Container de artigos não encontrado');
     return;
@@ -547,7 +591,10 @@ async function loadArticlesFromGoogleSheets() {
       articlesContainer.insertAdjacentHTML('beforeend', articleHTML);
     }
     
-    // Adicionar eventos aos botões
+    // Inicializa o carrossel após carregar os artigos
+    initArticlesCarousel();
+    
+    // Adiciona eventos para abrir o modal
     document.querySelectorAll('.blog-post').forEach(post => {
       post.addEventListener('click', () => {
         const index = post.dataset.index;
@@ -611,6 +658,8 @@ function initArticlesCarousel() {
   }
 
   function createDots() {
+    if (!dotsContainer) return;
+    
     dotsContainer.innerHTML = '';
     const totalPages = Math.ceil(carouselItems.length / visibleCards);
     
@@ -629,8 +678,8 @@ function initArticlesCarousel() {
 
   function updateButtonStates() {
     const totalItems = carouselItems.length;
-    prevBtn.disabled = currentIndex === 0;
-    nextBtn.disabled = currentIndex >= totalItems - visibleCards;
+    if (prevBtn) prevBtn.disabled = currentIndex === 0;
+    if (nextBtn) nextBtn.disabled = currentIndex >= totalItems - visibleCards;
   }
 
   function nextSlide() {
@@ -662,15 +711,19 @@ function initArticlesCarousel() {
   }
 
   // Event listeners
-  prevBtn.addEventListener('click', () => {
-    prevSlide();
-    resetAutoScroll();
-  });
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      prevSlide();
+      resetAutoScroll();
+    });
+  }
 
-  nextBtn.addEventListener('click', () => {
-    nextSlide();
-    resetAutoScroll();
-  });
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      nextSlide();
+      resetAutoScroll();
+    });
+  }
 
   // Inicialização
   window.addEventListener('resize', updateCarousel);
@@ -687,84 +740,4 @@ function initArticlesCarousel() {
   carousel.addEventListener('mouseleave', () => {
     startAutoScroll();
   });
-}
-
-// Modifique a função loadArticlesFromGoogleSheets para usar o carrossel
-async function loadArticlesFromGoogleSheets() {
-  const articlesContainer = document.querySelector('.blog__carousel'); // Alterado para o carrossel
-  if (!articlesContainer) {
-    console.error('Container de artigos não encontrado');
-    return;
-  }
-
-  // Mostrar estado de carregamento
-  articlesContainer.innerHTML = '<p class="loading-msg">Carregando artigos...</p>';
-
-  try {
-    const sheetId = '12lVPZBOGyRwBmSolW-F_iyQzXE9Trwlx2MbaNOgUwWo';
-    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
-    
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Erro HTTP: ${response.status}`);
-    }
-    
-    const text = await response.text();
-    const jsonStart = text.indexOf('{');
-    const jsonEnd = text.lastIndexOf('}') + 1;
-    const jsonString = text.slice(jsonStart, jsonEnd);
-    const data = JSON.parse(jsonString);
-    
-    if (!data.table || !data.table.rows || data.table.rows.length === 0) {
-      articlesContainer.innerHTML = '<p class="no-articles">Nenhum artigo disponível no momento.</p>';
-      return;
-    }
-    
-    articlesContainer.innerHTML = '';
-    
-    const rows = data.table.rows;
-    const startRow = rows[0].c[0]?.v === "Título" ? 1 : 0;
-    
-    for (let i = startRow; i < rows.length; i++) {
-      const cells = rows[i].c;
-      const title = cells[0]?.v || 'Sem título';
-      const excerpt = cells[1]?.v || '';
-      const content = cells[2]?.v || '';
-      const date = cells[3]?.f || formatDate(cells[3]?.v) || '';
-      const imageUrl = cells[4]?.v || '';
-      const featured = (cells[5]?.v || '').toString().trim().toLowerCase() === 'sim';
-      
-      const articleHTML = `
-        <article class="blog-post ${featured ? 'featured' : ''}" data-index="${i - startRow}">
-          ${featured ? '<span class="featured-badge">Destaque</span>' : ''}
-          ${imageUrl ? `<img src="${imageUrl}" alt="${title}" class="blog-post__image" loading="lazy">` : ''}
-          <div class="blog-post__content">
-            <h3 class="blog-post__title">${title}</h3>
-            ${date ? `<p class="blog-post__date">${date}</p>` : ''}
-            <p class="blog-post__excerpt">${excerpt}</p>
-            <button class="blog-post__read-more">Ler artigo completo</button>
-          </div>
-        </article>
-      `;
-      
-      articlesContainer.insertAdjacentHTML('beforeend', articleHTML);
-    }
-    
-    // Inicializa o carrossel após carregar os artigos
-    initArticlesCarousel();
-    
-    // Adiciona eventos para abrir o modal
-    document.querySelectorAll('.blog-post').forEach(post => {
-      post.addEventListener('click', () => {
-        const index = post.dataset.index;
-        showFullArticle(rows[parseInt(index) + startRow]);
-      });
-    });
-    
-  } catch (error) {
-    console.error('Erro ao carregar artigos:', error);
-    articlesContainer.innerHTML = `
-      <p class="error-msg">Não foi possível carregar os artigos no momento. Por favor, tente novamente mais tarde.</p>
-    `;
-  }
 }
