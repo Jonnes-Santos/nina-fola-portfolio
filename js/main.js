@@ -393,3 +393,153 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+// Adicione esta função para formatar datas
+function formatDate(dateString) {
+  if (!dateString) return '';
+  
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  } catch (e) {
+    console.error('Erro ao formatar data:', e);
+    return dateString;
+  }
+}
+
+// Modifique a função loadArticlesFromGoogleSheets para lidar melhor com erros
+async function loadArticlesFromGoogleSheets() {
+  const articlesContainer = document.querySelector('.blog__posts');
+  if (!articlesContainer) {
+    console.error('Container de artigos não encontrado');
+    return;
+  }
+
+  // Mostrar estado de carregamento
+  articlesContainer.innerHTML = '<p class="loading-msg">Carregando artigos...</p>';
+
+  try {
+    const sheetId = '12lVPZBOGyRwBmSolW-F_iyQzXE9Trwlx2MbaNOgUwWo';
+    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
+    
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Erro HTTP: ${response.status}`);
+    }
+    
+    const text = await response.text();
+    const json = JSON.parse(text.substr(47).slice(0, -2));
+    
+    // Limpa artigos antigos
+    articlesContainer.innerHTML = '';
+    
+    // Verifica se há dados
+    if (!json.table || !json.table.rows || json.table.rows.length < 2) {
+      articlesContainer.innerHTML = '<p class="no-articles">Nenhum artigo disponível no momento.</p>';
+      return;
+    }
+    
+    // Processa cada linha (ignorando o cabeçalho)
+    json.table.rows.slice(1).forEach((row, index) => {
+      const cells = row.c;
+      const title = cells[0]?.v || 'Sem título';
+      const excerpt = cells[1]?.v || '';
+      const content = cells[2]?.v || '';
+      const date = cells[3]?.v ? formatDate(cells[3].v) : '';
+      const imageUrl = cells[4]?.v || '';
+      const featured = cells[5]?.v === 'Sim';
+      
+      const articleHTML = `
+        <article class="blog-post ${featured ? 'featured' : ''}" data-index="${index}">
+          ${featured ? '<span class="featured-badge">Destaque</span>' : ''}
+          ${imageUrl ? `<img src="${imageUrl}" alt="${title}" class="blog-post__image" loading="lazy">` : ''}
+          <div class="blog-post__content">
+            <h3 class="blog-post__title">${title}</h3>
+            ${date ? `<p class="blog-post__date">${date}</p>` : ''}
+            <p class="blog-post__excerpt">${excerpt}</p>
+            <button class="blog-post__read-more">Ler artigo completo</button>
+          </div>
+        </article>
+      `;
+      
+      articlesContainer.insertAdjacentHTML('beforeend', articleHTML);
+    });
+    
+    // Adiciona eventos aos botões
+    document.querySelectorAll('.blog-post').forEach(post => {
+      post.addEventListener('click', () => {
+        const index = post.dataset.index;
+        showFullArticle(json.table.rows.slice(1)[index]);
+      });
+    });
+    
+  } catch (error) {
+    console.error('Erro ao carregar artigos:', error);
+    articlesContainer.innerHTML = `
+      <p class="error-msg">Não foi possível carregar os artigos no momento. Por favor, tente novamente mais tarde.</p>
+    `;
+  }
+}
+
+// Modifique a função showFullArticle para ser mais robusta
+function showFullArticle(row) {
+  const modal = document.getElementById('articleModal');
+  if (!modal) {
+    console.error('Modal de artigo não encontrado');
+    return;
+  }
+
+  const cells = row.c;
+  
+  const titleElement = modal.querySelector('.article-modal__title');
+  const dateElement = modal.querySelector('.article-modal__date');
+  const bodyElement = modal.querySelector('.article-modal__body');
+  const imgElement = modal.querySelector('.article-modal__image');
+  
+  if (titleElement) titleElement.textContent = cells[0]?.v || 'Sem título';
+  if (dateElement) dateElement.textContent = cells[3]?.v ? formatDate(cells[3].v) : '';
+  if (bodyElement) bodyElement.innerHTML = cells[2]?.v || 'Conteúdo não disponível';
+  
+  if (imgElement) {
+    if (cells[4]?.v) {
+      imgElement.src = cells[4].v;
+      imgElement.alt = cells[0]?.v || 'Imagem do artigo';
+      imgElement.style.display = 'block';
+    } else {
+      imgElement.style.display = 'none';
+    }
+  }
+  
+  modal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+// Adicione este código ao final do event listener DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+  // ... seu código existente ...
+
+  // Adicione esta linha para carregar os artigos quando a página carregar
+  loadArticlesFromGoogleSheets();
+
+  // Fechar modal de artigo
+  const articleModalClose = document.querySelector('.article-modal__close');
+  if (articleModalClose) {
+    articleModalClose.addEventListener('click', () => {
+      document.getElementById('articleModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    });
+  }
+
+  // Fechar ao clicar fora
+  window.addEventListener('click', (event) => {
+    const articleModal = document.getElementById('articleModal');
+    if (event.target === articleModal && articleModal) {
+      articleModal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+  });
+});
