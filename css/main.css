@@ -1019,7 +1019,7 @@ section {
 .work-card[data-category="artistic"] .work-card__link {
   padding: 0.5rem 1rem;
   background: var(--color-accent);
-  color: rgb(19, 9, 9);
+  color: white;
   text-decoration: none;
   border-radius: 50px;
   font-size: 0.9rem;
@@ -1076,6 +1076,31 @@ section {
   .main-header__mobile-btn[aria-expanded="true"]::before {
     content: '✕';
   }
+  /* Garante que o título do card seja visível em mobile */
+  .work-card[data-category="academic"] .work-card__title,
+  .work-card[data-category="artistic"] .work-card__title {
+    color: var(--color-text-dark) !important; /* Força a cor do texto */
+    margin-bottom: 0.5rem;
+  }
+
+  .work-card[data-category="academic"] .work-card__subtitle,
+  .work-card[data-category="artistic"] .work-card__subtitle {
+    color: var(--color-text) !important; /* Força a cor do texto */
+    margin-bottom: 1rem;
+  }
+
+  /* Ajusta o overlay para não cobrir o conteúdo em mobile */
+  .work-card[data-category="academic"] .work-card__overlay,
+  .work-card[data-category="artistic"] .work-card__overlay {
+    position: relative;
+    background: transparent;
+    opacity: 1;
+    padding: 0;
+    height: auto;
+    color: inherit;
+  }
+  
+  
 
   /* Hero */
   .hero {
