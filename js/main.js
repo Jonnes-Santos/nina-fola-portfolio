@@ -392,14 +392,51 @@ document.addEventListener('DOMContentLoaded', () => {
       menu.style.display = 'none';
     }
   });
+
+  // ===== CARREGAR ARTIGOS DO GOOGLE SHEETS =====
+  loadArticlesFromGoogleSheets();
+
+  // ===== FECHAR MODAL DE ARTIGO =====
+  const articleModalClose = document.querySelector('.article-modal__close');
+  if (articleModalClose) {
+    articleModalClose.addEventListener('click', () => {
+      document.getElementById('articleModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    });
+  }
+
+  // Fechar ao clicar fora
+  window.addEventListener('click', (event) => {
+    const articleModal = document.getElementById('articleModal');
+    if (event.target === articleModal && articleModal) {
+      articleModal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+  });
 });
 
-// Adicione esta função para formatar datas
-function formatDate(dateString) {
-  if (!dateString) return '';
+// ===== FUNÇÕES AUXILIARES =====
+
+function formatDate(dateValue) {
+  if (!dateValue) return '';
   
   try {
-    const date = new Date(dateString);
+    // Se for um objeto Date do Google Sheets (ex: "Date(2025,3,23)")
+    if (typeof dateValue === 'string' && dateValue.startsWith('Date(')) {
+      const dateParts = dateValue.match(/Date\((\d+),(\d+),(\d+)\)/);
+      if (dateParts) {
+        const year = parseInt(dateParts[1]);
+        const month = parseInt(dateParts[2]);
+        const day = parseInt(dateParts[3]);
+        const date = new Date(year, month, day);
+        return date.toLocaleDateString('pt-BR');
+      }
+    }
+    
+    // Se for um timestamp ou string de data
+    const date = new Date(dateValue);
+    if (isNaN(date.getTime())) return '';
+    
     return date.toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
@@ -407,11 +444,10 @@ function formatDate(dateString) {
     });
   } catch (e) {
     console.error('Erro ao formatar data:', e);
-    return dateString;
+    return '';
   }
 }
 
-// Modifique a função loadArticlesFromGoogleSheets para lidar melhor com erros
 async function loadArticlesFromGoogleSheets() {
   const articlesContainer = document.querySelector('.blog__posts');
   if (!articlesContainer) {
@@ -432,29 +468,37 @@ async function loadArticlesFromGoogleSheets() {
     }
     
     const text = await response.text();
-    const json = JSON.parse(text.substr(47).slice(0, -2));
     
-    // Limpa artigos antigos
-    articlesContainer.innerHTML = '';
+    // Extrair o JSON da resposta (forma mais robusta)
+    const jsonStart = text.indexOf('{');
+    const jsonEnd = text.lastIndexOf('}') + 1;
+    const jsonString = text.slice(jsonStart, jsonEnd);
+    const data = JSON.parse(jsonString);
     
-    // Verifica se há dados
-    if (!json.table || !json.table.rows || json.table.rows.length < 2) {
+    // Verificar se temos dados válidos
+    if (!data.table || !data.table.rows || data.table.rows.length === 0) {
       articlesContainer.innerHTML = '<p class="no-articles">Nenhum artigo disponível no momento.</p>';
       return;
     }
     
-    // Processa cada linha (ignorando o cabeçalho)
-    json.table.rows.slice(1).forEach((row, index) => {
-      const cells = row.c;
+    // Limpar artigos antigos
+    articlesContainer.innerHTML = '';
+    
+    // Processar cada linha (ignorando o cabeçalho se houver)
+    const rows = data.table.rows;
+    const startRow = rows[0].c[0]?.v === "Título" ? 1 : 0; // Pular cabeçalho se existir
+    
+    for (let i = startRow; i < rows.length; i++) {
+      const cells = rows[i].c;
       const title = cells[0]?.v || 'Sem título';
       const excerpt = cells[1]?.v || '';
       const content = cells[2]?.v || '';
-      const date = cells[3]?.v ? formatDate(cells[3].v) : '';
+      const date = cells[3]?.f || formatDate(cells[3]?.v) || '';
       const imageUrl = cells[4]?.v || '';
-      const featured = cells[5]?.v === 'Sim';
+      const featured = (cells[5]?.v || '').toString().trim().toLowerCase() === 'sim';
       
       const articleHTML = `
-        <article class="blog-post ${featured ? 'featured' : ''}" data-index="${index}">
+        <article class="blog-post ${featured ? 'featured' : ''}" data-index="${i - startRow}">
           ${featured ? '<span class="featured-badge">Destaque</span>' : ''}
           ${imageUrl ? `<img src="${imageUrl}" alt="${title}" class="blog-post__image" loading="lazy">` : ''}
           <div class="blog-post__content">
@@ -467,13 +511,13 @@ async function loadArticlesFromGoogleSheets() {
       `;
       
       articlesContainer.insertAdjacentHTML('beforeend', articleHTML);
-    });
+    }
     
-    // Adiciona eventos aos botões
+    // Adicionar eventos aos botões
     document.querySelectorAll('.blog-post').forEach(post => {
       post.addEventListener('click', () => {
         const index = post.dataset.index;
-        showFullArticle(json.table.rows.slice(1)[index]);
+        showFullArticle(rows[parseInt(index) + startRow]);
       });
     });
     
@@ -485,7 +529,6 @@ async function loadArticlesFromGoogleSheets() {
   }
 }
 
-// Modifique a função showFullArticle para ser mais robusta
 function showFullArticle(row) {
   const modal = document.getElementById('articleModal');
   if (!modal) {
@@ -501,7 +544,9 @@ function showFullArticle(row) {
   const imgElement = modal.querySelector('.article-modal__image');
   
   if (titleElement) titleElement.textContent = cells[0]?.v || 'Sem título';
-  if (dateElement) dateElement.textContent = cells[3]?.v ? formatDate(cells[3].v) : '';
+  if (dateElement) dateElement.textContent = cells[3]?.f || formatDate(cells[3]?.v) || '';
+  
+  // Corrigindo o acesso ao conteúdo (coluna 2)
   if (bodyElement) bodyElement.innerHTML = cells[2]?.v || 'Conteúdo não disponível';
   
   if (imgElement) {
@@ -514,32 +559,52 @@ function showFullArticle(row) {
     }
   }
   
+  // Mostrar modal com animação
   modal.style.display = 'block';
   document.body.style.overflow = 'hidden';
+  
+  // Trigger reflow para animação
+  void modal.offsetWidth;
+  
+  modal.classList.add('show');
 }
 
-// Adicione este código ao final do event listener DOMContentLoaded
-document.addEventListener('DOMContentLoaded', () => {
-  // ... seu código existente ...
-
-  // Adicione esta linha para carregar os artigos quando a página carregar
-  loadArticlesFromGoogleSheets();
-
-  // Fechar modal de artigo
-  const articleModalClose = document.querySelector('.article-modal__close');
-  if (articleModalClose) {
-    articleModalClose.addEventListener('click', () => {
-      document.getElementById('articleModal').style.display = 'none';
+// ===== FECHAR MODAL DE ARTIGO =====
+const articleModalClose = document.querySelector('.article-modal__close');
+if (articleModalClose) {
+  articleModalClose.addEventListener('click', () => {
+    const modal = document.getElementById('articleModal');
+    modal.classList.remove('show');
+    
+    setTimeout(() => {
+      modal.style.display = 'none';
       document.body.style.overflow = 'auto';
-    });
-  }
+    }, 300); // Deve corresponder ao tempo da transição CSS
+  });
+}
 
-  // Fechar ao clicar fora
-  window.addEventListener('click', (event) => {
-    const articleModal = document.getElementById('articleModal');
-    if (event.target === articleModal && articleModal) {
+// Fechar ao clicar fora
+window.addEventListener('click', (event) => {
+  const articleModal = document.getElementById('articleModal');
+  if (event.target === articleModal && articleModal) {
+    articleModal.classList.remove('show');
+    
+    setTimeout(() => {
       articleModal.style.display = 'none';
       document.body.style.overflow = 'auto';
-    }
-  });
+    }, 300);
+  }
+});
+
+// Fechar com ESC
+document.addEventListener('keydown', (e) => {
+  const articleModal = document.getElementById('articleModal');
+  if (e.key === 'Escape' && articleModal && articleModal.style.display === 'block') {
+    articleModal.classList.remove('show');
+    
+    setTimeout(() => {
+      articleModal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }, 300);
+  }
 });
