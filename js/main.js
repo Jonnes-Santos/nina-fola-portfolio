@@ -529,82 +529,208 @@ async function loadArticlesFromGoogleSheets() {
   }
 }
 
-function showFullArticle(row) {
-  const modal = document.getElementById('articleModal');
-  if (!modal) {
-    console.error('Modal de artigo não encontrado');
-    return;
+// ===== CARROSSEL DE ARTIGOS =====
+function initArticlesCarousel() {
+  const carousel = document.querySelector('.blog__carousel');
+  const carouselItems = document.querySelectorAll('.blog-post');
+  const prevBtn = document.querySelector('.blog__carousel-btn--prev');
+  const nextBtn = document.querySelector('.blog__carousel-btn--next');
+  const dotsContainer = document.querySelector('.blog__carousel-dots');
+  
+  if (!carousel || !carouselItems.length) return;
+  
+  let currentIndex = 0;
+  let cardWidth = 0;
+  let visibleCards = 3;
+  let autoScrollInterval;
+
+  function updateCardWidth() {
+    const containerWidth = document.querySelector('.blog__carousel-container').offsetWidth;
+    
+    if (window.innerWidth <= 768) {
+      visibleCards = 1;
+    } else if (window.innerWidth <= 1024) {
+      visibleCards = 2;
+    } else {
+      visibleCards = 3;
+    }
+    
+    cardWidth = carouselItems[0]?.offsetWidth || 300;
   }
 
-  const cells = row.c;
-  
-  const titleElement = modal.querySelector('.article-modal__title');
-  const dateElement = modal.querySelector('.article-modal__date');
-  const bodyElement = modal.querySelector('.article-modal__body');
-  const imgElement = modal.querySelector('.article-modal__image');
-  
-  if (titleElement) titleElement.textContent = cells[0]?.v || 'Sem título';
-  if (dateElement) dateElement.textContent = cells[3]?.f || formatDate(cells[3]?.v) || '';
-  
-  // Corrigindo o acesso ao conteúdo (coluna 2)
-  if (bodyElement) bodyElement.innerHTML = cells[2]?.v || 'Conteúdo não disponível';
-  
-  if (imgElement) {
-    if (cells[4]?.v) {
-      imgElement.src = cells[4].v;
-      imgElement.alt = cells[0]?.v || 'Imagem do artigo';
-      imgElement.style.display = 'block';
-    } else {
-      imgElement.style.display = 'none';
+  function updateCarousel() {
+    updateCardWidth();
+    const offset = -currentIndex * (cardWidth + 32);
+    carousel.style.transform = `translateX(${offset}px)`;
+    updateDots();
+    updateButtonStates();
+  }
+
+  function updateDots() {
+    const dots = document.querySelectorAll('.blog__carousel-dot');
+    const totalPages = Math.ceil(carouselItems.length / visibleCards);
+    const currentPage = Math.floor(currentIndex / visibleCards);
+    
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === currentPage);
+    });
+  }
+
+  function createDots() {
+    dotsContainer.innerHTML = '';
+    const totalPages = Math.ceil(carouselItems.length / visibleCards);
+    
+    for (let i = 0; i < totalPages; i++) {
+      const dot = document.createElement('button');
+      dot.classList.add('blog__carousel-dot');
+      if (i === 0) dot.classList.add('active');
+      dot.addEventListener('click', () => {
+        currentIndex = i * visibleCards;
+        updateCarousel();
+        resetAutoScroll();
+      });
+      dotsContainer.appendChild(dot);
     }
   }
-  
-  // Mostrar modal com animação
-  modal.style.display = 'block';
-  document.body.style.overflow = 'hidden';
-  
-  // Trigger reflow para animação
-  void modal.offsetWidth;
-  
-  modal.classList.add('show');
-}
 
-// ===== FECHAR MODAL DE ARTIGO =====
-const articleModalClose = document.querySelector('.article-modal__close');
-if (articleModalClose) {
-  articleModalClose.addEventListener('click', () => {
-    const modal = document.getElementById('articleModal');
-    modal.classList.remove('show');
-    
-    setTimeout(() => {
-      modal.style.display = 'none';
-      document.body.style.overflow = 'auto';
-    }, 300); // Deve corresponder ao tempo da transição CSS
+  function updateButtonStates() {
+    const totalItems = carouselItems.length;
+    prevBtn.disabled = currentIndex === 0;
+    nextBtn.disabled = currentIndex >= totalItems - visibleCards;
+  }
+
+  function nextSlide() {
+    const totalItems = carouselItems.length;
+    if (currentIndex < totalItems - visibleCards) {
+      currentIndex++;
+    } else {
+      currentIndex = 0; // Volta para o primeiro item
+    }
+    updateCarousel();
+  }
+
+  function prevSlide() {
+    if (currentIndex > 0) {
+      currentIndex--;
+    } else {
+      currentIndex = Math.max(0, carouselItems.length - visibleCards); // Vai para o último item
+    }
+    updateCarousel();
+  }
+
+  function startAutoScroll() {
+    autoScrollInterval = setInterval(nextSlide, 5000); // Muda a cada 5 segundos
+  }
+
+  function resetAutoScroll() {
+    clearInterval(autoScrollInterval);
+    startAutoScroll();
+  }
+
+  // Event listeners
+  prevBtn.addEventListener('click', () => {
+    prevSlide();
+    resetAutoScroll();
+  });
+
+  nextBtn.addEventListener('click', () => {
+    nextSlide();
+    resetAutoScroll();
+  });
+
+  // Inicialização
+  window.addEventListener('resize', updateCarousel);
+  updateCardWidth();
+  createDots();
+  updateCarousel();
+  startAutoScroll();
+
+  // Pausar auto-scroll quando o mouse estiver sobre o carrossel
+  carousel.addEventListener('mouseenter', () => {
+    clearInterval(autoScrollInterval);
+  });
+
+  carousel.addEventListener('mouseleave', () => {
+    startAutoScroll();
   });
 }
 
-// Fechar ao clicar fora
-window.addEventListener('click', (event) => {
-  const articleModal = document.getElementById('articleModal');
-  if (event.target === articleModal && articleModal) {
-    articleModal.classList.remove('show');
-    
-    setTimeout(() => {
-      articleModal.style.display = 'none';
-      document.body.style.overflow = 'auto';
-    }, 300);
+// Modifique a função loadArticlesFromGoogleSheets para usar o carrossel
+async function loadArticlesFromGoogleSheets() {
+  const articlesContainer = document.querySelector('.blog__carousel'); // Alterado para o carrossel
+  if (!articlesContainer) {
+    console.error('Container de artigos não encontrado');
+    return;
   }
-});
 
-// Fechar com ESC
-document.addEventListener('keydown', (e) => {
-  const articleModal = document.getElementById('articleModal');
-  if (e.key === 'Escape' && articleModal && articleModal.style.display === 'block') {
-    articleModal.classList.remove('show');
+  // Mostrar estado de carregamento
+  articlesContainer.innerHTML = '<p class="loading-msg">Carregando artigos...</p>';
+
+  try {
+    const sheetId = '12lVPZBOGyRwBmSolW-F_iyQzXE9Trwlx2MbaNOgUwWo';
+    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
     
-    setTimeout(() => {
-      articleModal.style.display = 'none';
-      document.body.style.overflow = 'auto';
-    }, 300);
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Erro HTTP: ${response.status}`);
+    }
+    
+    const text = await response.text();
+    const jsonStart = text.indexOf('{');
+    const jsonEnd = text.lastIndexOf('}') + 1;
+    const jsonString = text.slice(jsonStart, jsonEnd);
+    const data = JSON.parse(jsonString);
+    
+    if (!data.table || !data.table.rows || data.table.rows.length === 0) {
+      articlesContainer.innerHTML = '<p class="no-articles">Nenhum artigo disponível no momento.</p>';
+      return;
+    }
+    
+    articlesContainer.innerHTML = '';
+    
+    const rows = data.table.rows;
+    const startRow = rows[0].c[0]?.v === "Título" ? 1 : 0;
+    
+    for (let i = startRow; i < rows.length; i++) {
+      const cells = rows[i].c;
+      const title = cells[0]?.v || 'Sem título';
+      const excerpt = cells[1]?.v || '';
+      const content = cells[2]?.v || '';
+      const date = cells[3]?.f || formatDate(cells[3]?.v) || '';
+      const imageUrl = cells[4]?.v || '';
+      const featured = (cells[5]?.v || '').toString().trim().toLowerCase() === 'sim';
+      
+      const articleHTML = `
+        <article class="blog-post ${featured ? 'featured' : ''}" data-index="${i - startRow}">
+          ${featured ? '<span class="featured-badge">Destaque</span>' : ''}
+          ${imageUrl ? `<img src="${imageUrl}" alt="${title}" class="blog-post__image" loading="lazy">` : ''}
+          <div class="blog-post__content">
+            <h3 class="blog-post__title">${title}</h3>
+            ${date ? `<p class="blog-post__date">${date}</p>` : ''}
+            <p class="blog-post__excerpt">${excerpt}</p>
+            <button class="blog-post__read-more">Ler artigo completo</button>
+          </div>
+        </article>
+      `;
+      
+      articlesContainer.insertAdjacentHTML('beforeend', articleHTML);
+    }
+    
+    // Inicializa o carrossel após carregar os artigos
+    initArticlesCarousel();
+    
+    // Adiciona eventos para abrir o modal
+    document.querySelectorAll('.blog-post').forEach(post => {
+      post.addEventListener('click', () => {
+        const index = post.dataset.index;
+        showFullArticle(rows[parseInt(index) + startRow]);
+      });
+    });
+    
+  } catch (error) {
+    console.error('Erro ao carregar artigos:', error);
+    articlesContainer.innerHTML = `
+      <p class="error-msg">Não foi possível carregar os artigos no momento. Por favor, tente novamente mais tarde.</p>
+    `;
   }
-});
+}
