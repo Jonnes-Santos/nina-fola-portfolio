@@ -949,6 +949,88 @@ section {
   font-size: 0.85rem;
   color: #999;
 }
+/* Estilos para os cards acadêmicos e artísticos */
+/* Adicione isso ao seu arquivo CSS, substituindo as regras existentes para esses elementos */
+
+/* Estilo para os cards acadêmicos e artísticos */
+.work-card[data-category="academic"],
+.work-card[data-category="artistic"] {
+  display: flex;
+  flex-direction: column;
+}
+
+.work-card[data-category="academic"] .work-card__image-wrapper,
+.work-card[data-category="artistic"] .work-card__image-wrapper {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.work-card[data-category="academic"] .work-card__image,
+.work-card[data-category="artistic"] .work-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.work-card[data-category="academic"] .work-card__overlay,
+.work-card[data-category="artistic"] .work-card__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.work-card[data-category="academic"]:hover .work-card__overlay,
+.work-card[data-category="artistic"]:hover .work-card__overlay {
+  opacity: 1;
+}
+
+.work-card[data-category="academic"] .work-card__content,
+.work-card[data-category="artistic"] .work-card__content {
+  padding: 1rem;
+}
+
+.work-card[data-category="academic"] .work-card__title,
+.work-card[data-category="artistic"] .work-card__title {
+  font-family: var(--font-primary);
+  font-size: 1.5rem;
+  margin: 0 0 0.5rem 0;
+  color: var(--color-text-dark);
+}
+
+.work-card[data-category="academic"] .work-card__subtitle,
+.work-card[data-category="artistic"] .work-card__subtitle {
+  font-size: 1rem;
+  margin: 0 0 1rem 0;
+  color: var(--color-text);
+  font-weight: 300;
+}
+
+.work-card[data-category="academic"] .work-card__link,
+.work-card[data-category="artistic"] .work-card__link {
+  padding: 0.5rem 1rem;
+  background: var(--color-accent);
+  color: rgb(19, 9, 9);
+  text-decoration: none;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  transition: background var(--transition-normal);
+  display: inline-block;
+}
+
+.work-card[data-category="academic"] .work-card__link:hover,
+.work-card[data-category="artistic"] .work-card__link:hover {
+  background: var(--color-primary);
+}
 
 /* ===== RESPONSIVIDADE ===== */
 @media (max-width: 1024px) {
@@ -1057,6 +1139,70 @@ section {
   }
 
   /* Works */
+  /* Estilos para os cards acadêmicos e artísticos */
+.work-card[data-category="academic"] .work-card__image-wrapper,
+.work-card[data-category="artistic"] .work-card__image-wrapper {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.work-card[data-category="academic"] .work-card__overlay,
+.work-card[data-category="artistic"] .work-card__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  text-align: center;
+  color: white;
+}
+
+.work-card[data-category="academic"] .work-card__title,
+.work-card[data-category="artistic"] .work-card__title {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.work-card[data-category="academic"] .work-card__subtitle,
+.work-card[data-category="artistic"] .work-card__subtitle {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-weight: 300;
+}
+
+.work-card[data-category="academic"] .work-card__link,
+.work-card[data-category="artistic"] .work-card__link {
+  padding: 0.5rem 1rem;
+  background: var(--color-accent);
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  transition: background var(--transition-normal);
+}
+
+.work-card[data-category="academic"] .work-card__link:hover,
+.work-card[data-category="artistic"] .work-card__link:hover {
+  background: var(--color-primary);
+}
+
+/* Mantém os cards musicais como estavam */
+.work-card[data-category="music"] {
+  display: flex;
+  flex-direction: column;
+}
+
+.work-card[data-category="music"] .work-card__content {
+  padding: 1rem;
+}
   .work-card {
     flex: 0 0 100%;
   }
