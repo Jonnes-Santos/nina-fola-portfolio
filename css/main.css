@@ -1813,3 +1813,64 @@ section {
     max-height: 90vh;
   }
 }
+/* Adicione isso ao final do seu arquivo main.css */
+
+@media (max-width: 768px) {
+  /* Ajustes específicos para o carrossel de vídeos em mobile */
+  .music__thumbnails-carousel {
+    display: flex;
+    gap: 0.8rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.5rem 1rem;
+    margin: 0;
+    scrollbar-width: none; /* Firefox */
+  }
+  
+  .music__thumbnails-carousel::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+  
+  .music__thumbnail-card {
+    flex: 0 0 70%;
+    scroll-snap-align: start;
+    position: relative;
+    border-radius: var(--border-radius-md);
+  }
+  
+  .music__thumbnail-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+  }
+  
+  .music__thumb-btn {
+    display: none; /* Oculta os botões de navegação em mobile */
+  }
+  
+  .music__player-wrapper {
+    display: none; /* Oculta o player principal em mobile */
+  }
+  
+  .music__player-info {
+    padding: 1rem 0;
+    text-align: center;
+  }
+  
+  .music__video-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  .music__video-desc {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .music__thumbnail-card {
+    flex: 0 0 85%;
+  }
+}

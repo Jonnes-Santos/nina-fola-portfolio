@@ -429,6 +429,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const thumbNextBtn = document.querySelector('.music__thumb-btn--next');
     
     if (!mainPlayer || !thumbnails.length) return;
+  
+    // Comportamento específico para mobile
+    if (window.innerWidth <= 768) {
+      thumbnails.forEach(thumb => {
+        thumb.addEventListener('click', function() {
+          const videoId = this.dataset.videoId;
+          window.open(`https://youtu.be/${videoId}`, '_blank');
+        });
+      });
+      return; // Sai da função para mobile
+    }
+  
+    // Comportamento original para desktop
+    let currentIndex = 0;
     
     // Carrega o primeiro vídeo por padrão
     if (thumbnails.length > 0) {
@@ -440,9 +454,9 @@ document.addEventListener('DOMContentLoaded', () => {
       );
       firstThumb.classList.add('active');
     }
-    
+  
     // Event listeners para as miniaturas
-    thumbnails.forEach(thumb => {
+    thumbnails.forEach((thumb, index) => {
       thumb.addEventListener('click', function() {
         loadVideo(
           this.dataset.videoId, 
@@ -450,22 +464,12 @@ document.addEventListener('DOMContentLoaded', () => {
           this.dataset.desc
         );
         
-        // Atualiza a miniatura ativa
         thumbnails.forEach(t => t.classList.remove('active'));
         this.classList.add('active');
-        
-        // Rolagem suave para a miniatura selecionada
-        if (window.innerWidth > 480) {
-          this.scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest',
-            inline: 'center'
-          });
-        }
+        currentIndex = index;
       });
     });
-    
-    // Função para carregar vídeo
+  
     function loadVideo(videoId, title, desc) {
       // Mostra o loader
       mainPlayer.innerHTML = `
@@ -491,325 +495,343 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 300);
     }
     
-    // Controles do carrossel (apenas para desktop)
+    // Controles do carrossel
     if (thumbPrevBtn && thumbNextBtn) {
       thumbPrevBtn.addEventListener('click', () => {
-        thumbCarousel.scrollBy({
-          left: -200,
-          behavior: 'smooth'
-        });
+        if (currentIndex > 0) {
+          currentIndex--;
+          const prevThumb = thumbnails[currentIndex];
+          loadVideo(
+            prevThumb.dataset.videoId,
+            prevThumb.dataset.title,
+            prevThumb.dataset.desc
+          );
+          thumbnails.forEach(t => t.classList.remove('active'));
+          prevThumb.classList.add('active');
+          
+          prevThumb.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'center'
+          });
+        }
       });
       
       thumbNextBtn.addEventListener('click', () => {
-        thumbCarousel.scrollBy({
-          left: 200,
-          behavior: 'smooth'
-        });
+        if (currentIndex < thumbnails.length - 1) {
+          currentIndex++;
+          const nextThumb = thumbnails[currentIndex];
+          loadVideo(
+            nextThumb.dataset.videoId,
+            nextThumb.dataset.title,
+            nextThumb.dataset.desc
+          );
+          thumbnails.forEach(t => t.classList.remove('active'));
+          nextThumb.classList.add('active');
+          
+          nextThumb.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'center'
+          });
+        }
       });
     }
     
-    // Esconde os controles se não houver overflow
+    // Verifica overflow ao carregar e redimensionar
     function checkCarouselOverflow() {
-      if (window.innerWidth <= 480) {
-        if (thumbPrevBtn) thumbPrevBtn.style.display = 'none';
-        if (thumbNextBtn) thumbNextBtn.style.display = 'none';
-        return;
-      }
-      
       const hasOverflow = thumbCarousel.scrollWidth > thumbCarousel.clientWidth;
       if (thumbPrevBtn) thumbPrevBtn.style.display = hasOverflow ? 'flex' : 'none';
       if (thumbNextBtn) thumbNextBtn.style.display = hasOverflow ? 'flex' : 'none';
     }
     
-    // Verifica overflow ao carregar e redimensionar
     window.addEventListener('resize', checkCarouselOverflow);
     checkCarouselOverflow();
   }
 
   // Inicializa a galeria de vídeos
   initVideoGallery();
-});
 
-// ===== FUNÇÕES AUXILIARES =====
-
-function formatDate(dateValue) {
-  if (!dateValue) return '';
-  
-  try {
-    // Se for um objeto Date do Google Sheets (ex: "Date(2025,3,23)")
-    if (typeof dateValue === 'string' && dateValue.startsWith('Date(')) {
-      const dateParts = dateValue.match(/Date\((\d+),(\d+),(\d+)\)/);
-      if (dateParts) {
-        const year = parseInt(dateParts[1]);
-        const month = parseInt(dateParts[2]);
-        const day = parseInt(dateParts[3]);
-        const date = new Date(year, month, day);
-        return date.toLocaleDateString('pt-BR');
+  // ===== FUNÇÕES AUXILIARES =====
+  function formatDate(dateValue) {
+    if (!dateValue) return '';
+    
+    try {
+      // Se for um objeto Date do Google Sheets (ex: "Date(2025,3,23)")
+      if (typeof dateValue === 'string' && dateValue.startsWith('Date(')) {
+        const dateParts = dateValue.match(/Date\((\d+),(\d+),(\d+)\)/);
+        if (dateParts) {
+          const year = parseInt(dateParts[1]);
+          const month = parseInt(dateParts[2]);
+          const day = parseInt(dateParts[3]);
+          const date = new Date(year, month, day);
+          return date.toLocaleDateString('pt-BR');
+        }
       }
+      
+      // Se for um timestamp ou string de data
+      const date = new Date(dateValue);
+      if (isNaN(date.getTime())) return '';
+      
+      return date.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    } catch (e) {
+      console.error('Erro ao formatar data:', e);
+      return '';
+    }
+  }
+
+  function showFullArticle(row) {
+    const articleModal = document.getElementById('articleModal');
+    if (!articleModal) return;
+    
+    const cells = row.c;
+    const title = cells[0]?.v || 'Sem título';
+    const content = cells[2]?.v || 'Conteúdo não disponível';
+    const date = cells[3]?.f || formatDate(cells[3]?.v) || '';
+    const imageUrl = cells[4]?.v || '';
+    
+    // Preencher o modal com os dados do artigo
+    articleModal.querySelector('.article-modal__title').textContent = title;
+    articleModal.querySelector('.article-modal__date').textContent = date;
+    articleModal.querySelector('.article-modal__body').innerHTML = content;
+    
+    // Lidar com a imagem (se existir)
+    const modalImage = articleModal.querySelector('.article-modal__image');
+    if (imageUrl) {
+      modalImage.src = imageUrl;
+      modalImage.alt = title;
+      modalImage.style.display = 'block';
+    } else {
+      modalImage.style.display = 'none';
     }
     
-    // Se for um timestamp ou string de data
-    const date = new Date(dateValue);
-    if (isNaN(date.getTime())) return '';
+    // Mostrar o modal
+    articleModal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
     
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  } catch (e) {
-    console.error('Erro ao formatar data:', e);
-    return '';
-  }
-}
-
-function showFullArticle(row) {
-  const articleModal = document.getElementById('articleModal');
-  if (!articleModal) return;
-  
-  const cells = row.c;
-  const title = cells[0]?.v || 'Sem título';
-  const content = cells[2]?.v || 'Conteúdo não disponível';
-  const date = cells[3]?.f || formatDate(cells[3]?.v) || '';
-  const imageUrl = cells[4]?.v || '';
-  
-  // Preencher o modal com os dados do artigo
-  articleModal.querySelector('.article-modal__title').textContent = title;
-  articleModal.querySelector('.article-modal__date').textContent = date;
-  articleModal.querySelector('.article-modal__body').innerHTML = content;
-  
-  // Lidar com a imagem (se existir)
-  const modalImage = articleModal.querySelector('.article-modal__image');
-  if (imageUrl) {
-    modalImage.src = imageUrl;
-    modalImage.alt = title;
-    modalImage.style.display = 'block';
-  } else {
-    modalImage.style.display = 'none';
-  }
-  
-  // Mostrar o modal
-  articleModal.style.display = 'block';
-  document.body.style.overflow = 'hidden';
-  
-  // Adicionar classe 'show' para ativar a animação
-  setTimeout(() => {
-    articleModal.classList.add('show');
-  }, 10);
-}
-
-async function loadArticlesFromGoogleSheets() {
-  const articlesContainer = document.querySelector('.blog__carousel');
-  if (!articlesContainer) {
-    console.error('Container de artigos não encontrado');
-    return;
+    // Adicionar classe 'show' para ativar a animação
+    setTimeout(() => {
+      articleModal.classList.add('show');
+    }, 10);
   }
 
-  // Mostrar estado de carregamento
-  articlesContainer.innerHTML = '<p class="loading-msg">Carregando artigos...</p>';
-
-  try {
-    const sheetId = '12lVPZBOGyRwBmSolW-F_iyQzXE9Trwlx2MbaNOgUwWo';
-    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
-    
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Erro HTTP: ${response.status}`);
-    }
-    
-    const text = await response.text();
-    
-    // Extrair o JSON da resposta (forma mais robusta)
-    const jsonStart = text.indexOf('{');
-    const jsonEnd = text.lastIndexOf('}') + 1;
-    const jsonString = text.slice(jsonStart, jsonEnd);
-    const data = JSON.parse(jsonString);
-    
-    // Verificar se temos dados válidos
-    if (!data.table || !data.table.rows || data.table.rows.length === 0) {
-      articlesContainer.innerHTML = '<p class="no-articles">Nenhum artigo disponível no momento.</p>';
+  async function loadArticlesFromGoogleSheets() {
+    const articlesContainer = document.querySelector('.blog__carousel');
+    if (!articlesContainer) {
+      console.error('Container de artigos não encontrado');
       return;
     }
-    
-    // Limpar artigos antigos
-    articlesContainer.innerHTML = '';
-    
-    // Processar cada linha (ignorando o cabeçalho se houver)
-    const rows = data.table.rows;
-    const startRow = rows[0].c[0]?.v === "Título" ? 1 : 0; // Pular cabeçalho se existir
-    
-    for (let i = startRow; i < rows.length; i++) {
-      const cells = rows[i].c;
-      const title = cells[0]?.v || 'Sem título';
-      const excerpt = cells[1]?.v || '';
-      const content = cells[2]?.v || '';
-      const date = cells[3]?.f || formatDate(cells[3]?.v) || '';
-      const imageUrl = cells[4]?.v || '';
-      const featured = (cells[5]?.v || '').toString().trim().toLowerCase() === 'sim';
+
+    // Mostrar estado de carregamento
+    articlesContainer.innerHTML = '<p class="loading-msg">Carregando artigos...</p>';
+
+    try {
+      const sheetId = '12lVPZBOGyRwBmSolW-F_iyQzXE9Trwlx2MbaNOgUwWo';
+      const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
       
-      const articleHTML = `
-        <article class="blog-post ${featured ? 'featured' : ''}" data-index="${i - startRow}">
-          ${featured ? '<span class="featured-badge">Destaque</span>' : ''}
-          ${imageUrl ? `<img src="${imageUrl}" alt="${title}" class="blog-post__image" loading="lazy">` : ''}
-          <div class="blog-post__content">
-            <h3 class="blog-post__title">${title}</h3>
-            ${date ? `<p class="blog-post__date">${date}</p>` : ''}
-            <p class="blog-post__excerpt">${excerpt}</p>
-            <button class="blog-post__read-more">Ler artigo completo</button>
-          </div>
-        </article>
-      `;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Erro HTTP: ${response.status}`);
+      }
       
-      articlesContainer.insertAdjacentHTML('beforeend', articleHTML);
-    }
-    
-    // Inicializa o carrossel após carregar os artigos
-    initArticlesCarousel();
-    
-    // Adiciona eventos para abrir o modal
-    document.querySelectorAll('.blog-post').forEach(post => {
-      post.addEventListener('click', () => {
-        const index = post.dataset.index;
-        showFullArticle(rows[parseInt(index) + startRow]);
+      const text = await response.text();
+      
+      // Extrair o JSON da resposta (forma mais robusta)
+      const jsonStart = text.indexOf('{');
+      const jsonEnd = text.lastIndexOf('}') + 1;
+      const jsonString = text.slice(jsonStart, jsonEnd);
+      const data = JSON.parse(jsonString);
+      
+      // Verificar se temos dados válidos
+      if (!data.table || !data.table.rows || data.table.rows.length === 0) {
+        articlesContainer.innerHTML = '<p class="no-articles">Nenhum artigo disponível no momento.</p>';
+        return;
+      }
+      
+      // Limpar artigos antigos
+      articlesContainer.innerHTML = '';
+      
+      // Processar cada linha (ignorando o cabeçalho se houver)
+      const rows = data.table.rows;
+      const startRow = rows[0].c[0]?.v === "Título" ? 1 : 0; // Pular cabeçalho se existir
+      
+      for (let i = startRow; i < rows.length; i++) {
+        const cells = rows[i].c;
+        const title = cells[0]?.v || 'Sem título';
+        const excerpt = cells[1]?.v || '';
+        const content = cells[2]?.v || '';
+        const date = cells[3]?.f || formatDate(cells[3]?.v) || '';
+        const imageUrl = cells[4]?.v || '';
+        const featured = (cells[5]?.v || '').toString().trim().toLowerCase() === 'sim';
+        
+        const articleHTML = `
+          <article class="blog-post ${featured ? 'featured' : ''}" data-index="${i - startRow}">
+            ${featured ? '<span class="featured-badge">Destaque</span>' : ''}
+            ${imageUrl ? `<img src="${imageUrl}" alt="${title}" class="blog-post__image" loading="lazy">` : ''}
+            <div class="blog-post__content">
+              <h3 class="blog-post__title">${title}</h3>
+              ${date ? `<p class="blog-post__date">${date}</p>` : ''}
+              <p class="blog-post__excerpt">${excerpt}</p>
+              <button class="blog-post__read-more">Ler artigo completo</button>
+            </div>
+          </article>
+        `;
+        
+        articlesContainer.insertAdjacentHTML('beforeend', articleHTML);
+      }
+      
+      // Inicializa o carrossel após carregar os artigos
+      initArticlesCarousel();
+      
+      // Adiciona eventos para abrir o modal
+      document.querySelectorAll('.blog-post').forEach(post => {
+        post.addEventListener('click', () => {
+          const index = post.dataset.index;
+          showFullArticle(rows[parseInt(index) + startRow]);
+        });
       });
-    });
-    
-  } catch (error) {
-    console.error('Erro ao carregar artigos:', error);
-    articlesContainer.innerHTML = `
-      <p class="error-msg">Não foi possível carregar os artigos no momento. Por favor, tente novamente mais tarde.</p>
-    `;
-  }
-}
-
-// ===== CARROSSEL DE ARTIGOS =====
-function initArticlesCarousel() {
-  const carousel = document.querySelector('.blog__carousel');
-  const carouselItems = document.querySelectorAll('.blog-post');
-  const prevBtn = document.querySelector('.blog__carousel-btn--prev');
-  const nextBtn = document.querySelector('.blog__carousel-btn--next');
-  const dotsContainer = document.querySelector('.blog__carousel-dots');
-  
-  if (!carousel || !carouselItems.length) return;
-  
-  let currentIndex = 0;
-  let cardWidth = 0;
-  let visibleCards = 3;
-  let autoScrollInterval;
-
-  function updateCardWidth() {
-    const containerWidth = document.querySelector('.blog__carousel-container').offsetWidth;
-    
-    if (window.innerWidth <= 768) {
-      visibleCards = 1;
-    } else if (window.innerWidth <= 1024) {
-      visibleCards = 2;
-    } else {
-      visibleCards = 3;
+      
+    } catch (error) {
+      console.error('Erro ao carregar artigos:', error);
+      articlesContainer.innerHTML = `
+        <p class="error-msg">Não foi possível carregar os artigos no momento. Por favor, tente novamente mais tarde.</p>
+      `;
     }
-    
-    cardWidth = carouselItems[0]?.offsetWidth || 300;
   }
 
-  function updateCarousel() {
-    updateCardWidth();
-    const offset = -currentIndex * (cardWidth + 32);
-    carousel.style.transform = `translateX(${offset}px)`;
-    updateDots();
-    updateButtonStates();
-  }
+  // ===== CARROSSEL DE ARTIGOS =====
+  function initArticlesCarousel() {
+    const carousel = document.querySelector('.blog__carousel');
+    const carouselItems = document.querySelectorAll('.blog-post');
+    const prevBtn = document.querySelector('.blog__carousel-btn--prev');
+    const nextBtn = document.querySelector('.blog__carousel-btn--next');
+    const dotsContainer = document.querySelector('.blog__carousel-dots');
+    
+    if (!carousel || !carouselItems.length) return;
+    
+    let currentIndex = 0;
+    let cardWidth = 0;
+    let visibleCards = 3;
+    let autoScrollInterval;
 
-  function updateDots() {
-    const dots = document.querySelectorAll('.blog__carousel-dot');
-    const totalPages = Math.ceil(carouselItems.length / visibleCards);
-    const currentPage = Math.floor(currentIndex / visibleCards);
-    
-    dots.forEach((dot, index) => {
-      dot.classList.toggle('active', index === currentPage);
-    });
-  }
+    function updateCardWidth() {
+      const containerWidth = document.querySelector('.blog__carousel-container').offsetWidth;
+      
+      if (window.innerWidth <= 768) {
+        visibleCards = 1;
+      } else if (window.innerWidth <= 1024) {
+        visibleCards = 2;
+      } else {
+        visibleCards = 3;
+      }
+      
+      cardWidth = carouselItems[0]?.offsetWidth || 300;
+    }
 
-  function createDots() {
-    if (!dotsContainer) return;
-    
-    dotsContainer.innerHTML = '';
-    const totalPages = Math.ceil(carouselItems.length / visibleCards);
-    
-    for (let i = 0; i < totalPages; i++) {
-      const dot = document.createElement('button');
-      dot.classList.add('blog__carousel-dot');
-      if (i === 0) dot.classList.add('active');
-      dot.addEventListener('click', () => {
-        currentIndex = i * visibleCards;
-        updateCarousel();
+    function updateCarousel() {
+      updateCardWidth();
+      const offset = -currentIndex * (cardWidth + 32);
+      carousel.style.transform = `translateX(${offset}px)`;
+      updateDots();
+      updateButtonStates();
+    }
+
+    function updateDots() {
+      const dots = document.querySelectorAll('.blog__carousel-dot');
+      const totalPages = Math.ceil(carouselItems.length / visibleCards);
+      const currentPage = Math.floor(currentIndex / visibleCards);
+      
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentPage);
+      });
+    }
+
+    function createDots() {
+      if (!dotsContainer) return;
+      
+      dotsContainer.innerHTML = '';
+      const totalPages = Math.ceil(carouselItems.length / visibleCards);
+      
+      for (let i = 0; i < totalPages; i++) {
+        const dot = document.createElement('button');
+        dot.classList.add('blog__carousel-dot');
+        if (i === 0) dot.classList.add('active');
+        dot.addEventListener('click', () => {
+          currentIndex = i * visibleCards;
+          updateCarousel();
+          resetAutoScroll();
+        });
+        dotsContainer.appendChild(dot);
+      }
+    }
+
+    function updateButtonStates() {
+      const totalItems = carouselItems.length;
+      if (prevBtn) prevBtn.disabled = currentIndex === 0;
+      if (nextBtn) nextBtn.disabled = currentIndex >= totalItems - visibleCards;
+    }
+
+    function nextSlide() {
+      const totalItems = carouselItems.length;
+      if (currentIndex < totalItems - visibleCards) {
+        currentIndex++;
+      } else {
+        currentIndex = 0; // Volta para o primeiro item
+      }
+      updateCarousel();
+    }
+
+    function prevSlide() {
+      if (currentIndex > 0) {
+        currentIndex--;
+      } else {
+        currentIndex = Math.max(0, carouselItems.length - visibleCards); // Vai para o último item
+      }
+      updateCarousel();
+    }
+
+    function startAutoScroll() {
+      autoScrollInterval = setInterval(nextSlide, 5000); // Muda a cada 5 segundos
+    }
+
+    function resetAutoScroll() {
+      clearInterval(autoScrollInterval);
+      startAutoScroll();
+    }
+
+    // Event listeners
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        prevSlide();
         resetAutoScroll();
       });
-      dotsContainer.appendChild(dot);
     }
-  }
 
-  function updateButtonStates() {
-    const totalItems = carouselItems.length;
-    if (prevBtn) prevBtn.disabled = currentIndex === 0;
-    if (nextBtn) nextBtn.disabled = currentIndex >= totalItems - visibleCards;
-  }
-
-  function nextSlide() {
-    const totalItems = carouselItems.length;
-    if (currentIndex < totalItems - visibleCards) {
-      currentIndex++;
-    } else {
-      currentIndex = 0; // Volta para o primeiro item
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        nextSlide();
+        resetAutoScroll();
+      });
     }
+
+    // Inicialização
+    window.addEventListener('resize', updateCarousel);
+    updateCardWidth();
+    createDots();
     updateCarousel();
-  }
-
-  function prevSlide() {
-    if (currentIndex > 0) {
-      currentIndex--;
-    } else {
-      currentIndex = Math.max(0, carouselItems.length - visibleCards); // Vai para o último item
-    }
-    updateCarousel();
-  }
-
-  function startAutoScroll() {
-    autoScrollInterval = setInterval(nextSlide, 5000); // Muda a cada 5 segundos
-  }
-
-  function resetAutoScroll() {
-    clearInterval(autoScrollInterval);
     startAutoScroll();
-  }
 
-  // Event listeners
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      prevSlide();
-      resetAutoScroll();
+    // Pausar auto-scroll quando o mouse estiver sobre o carrossel
+    carousel.addEventListener('mouseenter', () => {
+      clearInterval(autoScrollInterval);
+    });
+
+    carousel.addEventListener('mouseleave', () => {
+      startAutoScroll();
     });
   }
-
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      nextSlide();
-      resetAutoScroll();
-    });
-  }
-
-  // Inicialização
-  window.addEventListener('resize', updateCarousel);
-  updateCardWidth();
-  createDots();
-  updateCarousel();
-  startAutoScroll();
-
-  // Pausar auto-scroll quando o mouse estiver sobre o carrossel
-  carousel.addEventListener('mouseenter', () => {
-    clearInterval(autoScrollInterval);
-  });
-
-  carousel.addEventListener('mouseleave', () => {
-    startAutoScroll();
-  });
-}
+});
