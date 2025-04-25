@@ -914,11 +914,11 @@ section {
 }
 
 .blog__carousel-btn--prev {
-  left: -1rem;
+  left: -1.3rem;
 }
 
 .blog__carousel-btn--next {
-  right: -1rem;
+  right: -1.3rem;
 }
 
 .blog__carousel-dots {
@@ -1069,131 +1069,222 @@ section {
   }
 }
 /* ===== SEÇÃO VÍDEOCLIPES ===== */
+/* ===== SEÇÃO VÍDEOCLIPES ATUALIZADA ===== */
 .music {
   padding: var(--space-xl) 5%;
   background-color: var(--color-bg-dark);
   color: var(--color-text-light);
 }
 
-.music__gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--space-lg);
-  margin-top: var(--space-md);
+.music__player-wrapper {
+  max-width: 800px;
+  margin: 0 auto var(--space-lg);
 }
 
-.music__video-card {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--border-radius-md);
-  overflow: hidden;
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-}
-
-.music__video-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-}
-
-.music__video-wrapper {
+.music__main-player {
   position: relative;
   padding-bottom: 56.25%; /* Proporção 16:9 */
   height: 0;
   overflow: hidden;
+  background: #000;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
 }
 
-.music__video-thumbnail {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.music__main-player iframe {
   position: absolute;
   top: 0;
   left: 0;
-  transition: transform var(--transition-slow);
-}
-
-.music__video-card:hover .music__video-thumbnail {
-  transform: scale(1.05);
-}
-
-.music__video-play {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 60px;
-  height: 60px;
-  background: rgba(230, 57, 70, 0.9);
+  width: 100%;
+  height: 100%;
   border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-normal);
-  opacity: 0.9;
 }
 
-.music__video-play svg {
-  width: 24px;
-  height: 24px;
-  fill: white;
-  margin-left: 4px;
-}
-
-.music__video-play:hover {
-  background: var(--color-primary);
-  transform: translate(-50%, -50%) scale(1.1);
-  opacity: 1;
-}
-
-.music__video-info {
-  padding: 1rem;
+.music__player-info {
+  padding: var(--space-sm) 0;
+  text-align: center;
 }
 
 .music__video-title {
   font-family: var(--font-primary);
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   margin-bottom: 0.5rem;
   color: var(--color-text-light);
 }
 
 .music__video-desc {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Efeito de overlay no hover */
-.music__video-wrapper::after {
-  content: '';
+/* Carrossel de miniaturas */
+.music__thumbnails-container {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.music__thumbnails-carousel {
+  display: flex;
+  gap: var(--space-sm);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  padding: var(--space-sm) 0;
+  margin: 0 var(--space-lg);
+  scrollbar-width: none; /* Firefox */
+}
+
+.music__thumbnails-carousel::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.music__thumbnail-card {
+  flex: 0 0 160px;
+  scroll-snap-align: start;
+  position: relative;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+}
+
+.music__thumbnail-card:hover {
+  transform: scale(1.05);
+}
+
+.music__thumbnail-img {
+  width: 100%;
+  height: 90px;
+  object-fit: cover;
+  display: block;
+}
+
+.music__thumbnail-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.7));
-  z-index: 1;
-  opacity: 0;
-  transition: opacity var(--transition-normal);
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
 }
 
-.music__video-card:hover .music__video-wrapper::after {
+.music__thumbnail-overlay svg {
+  width: 24px;
+  height: 24px;
+  fill: white;
+  opacity: 0.8;
+  transition: opacity var(--transition-fast);
+}
+
+.music__thumbnail-card:hover .music__thumbnail-overlay {
+  background: rgba(230, 57, 70, 0.7);
+}
+
+.music__thumbnail-card:hover .music__thumbnail-overlay svg {
   opacity: 1;
+}
+
+.music__thumb-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-dark);
+}
+
+.music__thumb-btn:hover {
+  background: var(--color-primary);
+  color: white;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.music__thumb-btn--prev {
+  left: 0;
+}
+
+.music__thumb-btn--next {
+  right: 0;
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
-  .music__gallery {
-    grid-template-columns: 1fr;
+  .music__player-wrapper {
+    margin-bottom: var(--space-md);
   }
   
-  .music__video-title {
-    font-size: 1.1rem;
+  .music__thumbnails-container {
+    padding: 0 var(--space-sm);
   }
   
-  .music__video-play {
-    width: 50px;
-    height: 50px;
+  .music__thumbnails-carousel {
+    margin: 0;
+    padding: var(--space-xs) 0;
+  }
+  
+  .music__thumbnail-card {
+    flex: 0 0 120px;
+  }
+  
+  .music__thumbnail-img {
+    height: 70px;
+  }
+  
+  .music__thumb-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Layout alternativo para mobile */
+  .music__player-wrapper {
+    display: none;
+  }
+  
+  .music__thumbnails-container {
+    max-width: 100%;
+  }
+  
+  .music__thumbnails-carousel {
+    flex-direction: column;
+    gap: var(--space-md);
+    overflow-x: visible;
+    padding: var(--space-sm);
+  }
+  
+  .music__thumbnail-card {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .music__thumbnail-img {
+    height: auto;
+    aspect-ratio: 16/9;
+  }
+  
+  .music__thumb-btn {
+    display: none;
   }
 }
 /* Loader para os vídeos */
@@ -1388,7 +1479,7 @@ section {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 .work-card[data-category="academic"] .work-card__overlay,

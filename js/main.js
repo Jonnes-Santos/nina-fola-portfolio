@@ -418,24 +418,69 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ===== CARREGAMENTO DE VÍDEOS =====
-  document.querySelectorAll('.music__video-play').forEach(button => {
-    button.addEventListener('click', function(e) {
-      e.stopPropagation();
-      
-      const videoId = this.getAttribute('data-video-id');
-      const videoWrapper = this.parentElement;
-      
-      // Adiciona um loader enquanto o iframe carrega
-      videoWrapper.innerHTML = `
+  // ===== GALERIA DE VÍDEOS =====
+  function initVideoGallery() {
+    const mainPlayer = document.querySelector('.music__main-player .music__video-wrapper');
+    const thumbnails = document.querySelectorAll('.music__thumbnail-card');
+    const videoTitle = document.querySelector('.music__video-title');
+    const videoDesc = document.querySelector('.music__video-desc');
+    const thumbCarousel = document.querySelector('.music__thumbnails-carousel');
+    const thumbPrevBtn = document.querySelector('.music__thumb-btn--prev');
+    const thumbNextBtn = document.querySelector('.music__thumb-btn--next');
+    
+    if (!mainPlayer || !thumbnails.length) return;
+    
+    // Carrega o primeiro vídeo por padrão
+    if (thumbnails.length > 0) {
+      const firstThumb = thumbnails[0];
+      loadVideo(
+        firstThumb.dataset.videoId, 
+        firstThumb.dataset.title, 
+        firstThumb.dataset.desc
+      );
+      firstThumb.classList.add('active');
+    }
+    
+    // Event listeners para as miniaturas
+    thumbnails.forEach(thumb => {
+      thumb.addEventListener('click', function() {
+        loadVideo(
+          this.dataset.videoId, 
+          this.dataset.title, 
+          this.dataset.desc
+        );
+        
+        // Atualiza a miniatura ativa
+        thumbnails.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Rolagem suave para a miniatura selecionada
+        if (window.innerWidth > 480) {
+          this.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'center'
+          });
+        }
+      });
+    });
+    
+    // Função para carregar vídeo
+    function loadVideo(videoId, title, desc) {
+      // Mostra o loader
+      mainPlayer.innerHTML = `
         <div class="video-loader">
           <div class="loader-spinner"></div>
         </div>
       `;
       
-      // Cria o iframe após um pequeno delay para mostrar o loader
+      // Atualiza as informações
+      videoTitle.textContent = title;
+      videoDesc.textContent = desc;
+      
+      // Carrega o iframe após um pequeno delay
       setTimeout(() => {
-        videoWrapper.innerHTML = `
+        mainPlayer.innerHTML = `
           <iframe width="560" height="315" 
                   src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1" 
                   frameborder="0" 
@@ -444,18 +489,45 @@ document.addEventListener('DOMContentLoaded', () => {
                   loading="lazy"></iframe>
         `;
       }, 300);
-    });
-  });
-  
-  // Opcional: Permite clicar em qualquer área do card para reproduzir
-  document.querySelectorAll('.music__video-card').forEach(card => {
-    card.addEventListener('click', function() {
-      const playButton = this.querySelector('.music__video-play');
-      if (playButton) {
-        playButton.click();
+    }
+    
+    // Controles do carrossel (apenas para desktop)
+    if (thumbPrevBtn && thumbNextBtn) {
+      thumbPrevBtn.addEventListener('click', () => {
+        thumbCarousel.scrollBy({
+          left: -200,
+          behavior: 'smooth'
+        });
+      });
+      
+      thumbNextBtn.addEventListener('click', () => {
+        thumbCarousel.scrollBy({
+          left: 200,
+          behavior: 'smooth'
+        });
+      });
+    }
+    
+    // Esconde os controles se não houver overflow
+    function checkCarouselOverflow() {
+      if (window.innerWidth <= 480) {
+        if (thumbPrevBtn) thumbPrevBtn.style.display = 'none';
+        if (thumbNextBtn) thumbNextBtn.style.display = 'none';
+        return;
       }
-    });
-  });
+      
+      const hasOverflow = thumbCarousel.scrollWidth > thumbCarousel.clientWidth;
+      if (thumbPrevBtn) thumbPrevBtn.style.display = hasOverflow ? 'flex' : 'none';
+      if (thumbNextBtn) thumbNextBtn.style.display = hasOverflow ? 'flex' : 'none';
+    }
+    
+    // Verifica overflow ao carregar e redimensionar
+    window.addEventListener('resize', checkCarouselOverflow);
+    checkCarouselOverflow();
+  }
+
+  // Inicializa a galeria de vídeos
+  initVideoGallery();
 });
 
 // ===== FUNÇÕES AUXILIARES =====

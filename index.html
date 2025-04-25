@@ -344,44 +344,80 @@
     </section>
 
     <!-- Seção Música/Vídeoclipes -->
+<!-- Seção Música/Vídeoclipes -->
 <section id="musica" class="music">
   <h2 class="section-title">Vídeoclipes</h2>
-  <div class="music__gallery">
-    <!-- Vídeo 1 -->
-    <div class="music__video-card">
+  
+  <!-- Player principal -->
+  <div class="music__player-wrapper">
+    <div class="music__main-player">
       <div class="music__video-wrapper">
-        <img src="https://img.youtube.com/vi/PRPre0-p9wQ/maxresdefault.jpg" 
-             alt="Thumbnail do vídeo Obatalá" class="music__video-thumbnail" loading="lazy">
-        <button class="music__video-play" data-video-id="PRPre0-p9wQ" aria-label="Reproduzir vídeo">
-          <svg viewBox="0 0 24 24">
-            <path d="M8 5v14l11-7z"/>
-          </svg>
-        </button>
-      </div>
-      <div class="music__video-info">
-        <h3 class="music__video-title">Obatalá</h3>
-        <p class="music__video-desc">2023 • Dessa Ferreira ft. Nina Fola</p>
+        <div class="video-loader">
+          <div class="loader-spinner"></div>
+        </div>
+        <!-- O iframe será inserido aqui pelo JavaScript -->
       </div>
     </div>
     
-    <!-- Vídeo 2 -->
-    <div class="music__video-card">
-      <div class="music__video-wrapper">
-        <img src="https://img.youtube.com/vi/SEU_OUTRO_VIDEO_ID/maxresdefault.jpg" 
-             alt="Thumbnail do vídeo Dois Mundos" class="music__video-thumbnail" loading="lazy">
-        <button class="music__video-play" data-video-id="SEU_OUTRO_VIDEO_ID" aria-label="Reproduzir vídeo">
+    <!-- Informações do vídeo atual -->
+    <div class="music__player-info">
+      <h3 class="music__video-title">Selecione um vídeo</h3>
+      <p class="music__video-desc"></p>
+    </div>
+  </div>
+  
+  <!-- Carrossel de miniaturas -->
+  <div class="music__thumbnails-container">
+    <div class="music__thumbnails-carousel">
+      <!-- Miniatura 1 -->
+      <div class="music__thumbnail-card" data-video-id="PRPre0-p9wQ" data-title="Obatalá" data-desc="2023 • Dessa Ferreira ft. Nina Fola">
+        <img src="https://img.youtube.com/vi/PRPre0-p9wQ/mqdefault.jpg" 
+             alt="Thumbnail do vídeo Obatalá" class="music__thumbnail-img" loading="lazy">
+        <div class="music__thumbnail-overlay">
           <svg viewBox="0 0 24 24">
             <path d="M8 5v14l11-7z"/>
           </svg>
-        </button>
+        </div>
       </div>
-      <div class="music__video-info">
-        <h3 class="music__video-title">Dois Mundos</h3>
-        <p class="music__video-desc">2023 • Dessa Ferreira ft. Nina Fola</p>
+
+      <!-- Miniatura 1 -->
+      <div class="music__thumbnail-card" data-video-id="PRPre0-p9wQ" data-title="Obatalá" data-desc="2023 • Dessa Ferreira ft. Nina Fola">
+        <img src="https://img.youtube.com/vi/PRPre0-p9wQ/mqdefault.jpg" 
+             alt="Thumbnail do vídeo Obatalá" class="music__thumbnail-img" loading="lazy">
+        <div class="music__thumbnail-overlay">
+          <svg viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </div>
       </div>
+
+      <!-- Miniatura 1 -->
+      <div class="music__thumbnail-card" data-video-id="PRPre0-p9wQ" data-title="Obatalá" data-desc="2023 • Dessa Ferreira ft. Nina Fola">
+        <img src="https://img.youtube.com/vi/PRPre0-p9wQ/mqdefault.jpg" 
+             alt="Thumbnail do vídeo Obatalá" class="music__thumbnail-img" loading="lazy">
+        <div class="music__thumbnail-overlay">
+          <svg viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Miniatura 2 -->
+      <div class="music__thumbnail-card" data-video-id="SEU_OUTRO_VIDEO_ID" data-title="Dois Mundos" data-desc="2023 • Dessa Ferreira ft. Nina Fola">
+        <img src="https://img.youtube.com/vi/SEU_OUTRO_VIDEO_ID/mqdefault.jpg" 
+             alt="Thumbnail do vídeo Dois Mundos" class="music__thumbnail-img" loading="lazy">
+        <div class="music__thumbnail-overlay">
+          <svg viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Adicione mais miniaturas conforme necessário -->
     </div>
     
-    <!-- Adicione mais vídeos conforme necessário -->
+    <button class="music__thumb-btn music__thumb-btn--prev" aria-label="Vídeo anterior">❮</button>
+    <button class="music__thumb-btn music__thumb-btn--next" aria-label="Próximo vídeo">❯</button>
   </div>
 </section>
 
